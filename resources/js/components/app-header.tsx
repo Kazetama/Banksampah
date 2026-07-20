@@ -33,19 +33,12 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import { dashboard as adminDashboard } from '@/routes/admin';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
 };
-
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
 
 const rightNavItems: NavItem[] = [
     {
@@ -65,7 +58,18 @@ const activeItemStyles =
 
 export function AppHeader({ breadcrumbs = [] }: Props) {
     const page = usePage();
-    const { auth } = page.props;
+    const { auth } = page.props as any;
+    const user = auth?.user;
+    const isAdmin = user?.role === 'admin';
+
+    const mainNavItems: NavItem[] = [
+        {
+            title: isAdmin ? 'Admin Dashboard' : 'Dashboard',
+            href: isAdmin ? adminDashboard() : dashboard(),
+            icon: LayoutGrid,
+        },
+    ];
+
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 
@@ -135,7 +139,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </div>
 
                     <Link
-                        href={dashboard()}
+                        href={isAdmin ? adminDashboard() : dashboard()}
                         prefetch
                         className="flex items-center space-x-2"
                     >
