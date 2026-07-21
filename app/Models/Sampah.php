@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Database\Factories\SampahFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sampah extends Model
 {
+    /** @use HasFactory<SampahFactory> */
+    use HasFactory;
+
     protected $table = 'sampah';
 
     protected $fillable = [
@@ -18,7 +23,7 @@ class Sampah extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<SampahCategory, $this>
+     * @return BelongsTo<SampahCategory, $this>
      */
     public function category(): BelongsTo
     {
@@ -26,7 +31,7 @@ class Sampah extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Transaction, $this>
+     * @return HasMany<Transaction, $this>
      */
     public function transactions(): HasMany
     {

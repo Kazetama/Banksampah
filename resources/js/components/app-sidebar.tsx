@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Activity, Award, BookOpen, FolderGit2, Gift, LayoutGrid, Scale, Trash2, Users } from 'lucide-react';
+import { Activity, Award, BookOpen, FolderGit2, Gift, LayoutGrid, Receipt, Scale, Trash2, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -73,9 +73,24 @@ export function AppSidebar() {
         });
     } else if (role === 'nasabah') {
         mainNavItems.push({
-            title: 'Dashboard Warga',
+            title: 'Dashboard',
             href: nasabah.dashboard().url,
             icon: LayoutGrid,
+        });
+        mainNavItems.push({
+            title: 'Katalog Sampah',
+            href: nasabah.katalogSampah.index().url,
+            icon: Trash2,
+        });
+        mainNavItems.push({
+            title: 'Katalog Hadiah',
+            href: nasabah.rewards.index().url,
+            icon: Gift,
+        });
+        mainNavItems.push({
+            title: 'Riwayat Setoran',
+            href: nasabah.transactions.index().url,
+            icon: Receipt,
         });
     }
 

@@ -1,28 +1,140 @@
 import { Head } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { Coins, Leaf, TrendingUp } from 'lucide-react';
 import nasabah from '@/routes/nasabah';
+import type { Sampah, User } from '@/types';
 
-export default function Dashboard() {
+interface Transaction {
+    id: number;
+    total_weight: number;
+    total_income: number;
+    point_received: number;
+    created_at: string;
+    sampah?: Sampah;
+    admin?: User;
+}
+
+interface DashboardStats {
+    total_points: number;
+    total_income: number;
+    total_weight: number;
+}
+
+interface DashboardProps {
+    stats: DashboardStats;
+    recent_transactions: Transaction[];
+}
+
+const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
+
+const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    });
+
+export default function Dashboard({ stats, recent_transactions }: DashboardProps) {
+    const statCards = [
+        {
+            label: 'Saldo Poin Tabungan',
+            value: `${stats.total_points.toLocaleString('id-ID')} poin`,
+            icon: Coins,
+            color: 'text-amber-500',
+            bg: 'bg-amber-500/10',
+            border: 'border-amber-500/20',
+        },
+        {
+            label: 'Total Pendapatan Rupiah',
+            value: formatCurrency(stats.total_income),
+            icon: TrendingUp,
+            color: 'text-emerald-500',
+            bg: 'bg-emerald-500/10',
+            border: 'border-emerald-500/20',
+        },
+        {
+            label: 'Total Berat Setoran',
+            value: `${stats.total_weight} kg`,
+            icon: Leaf,
+            color: 'text-blue-500',
+            bg: 'bg-blue-500/10',
+            border: 'border-blue-500/20',
+        },
+    ];
+
     return (
         <>
             <Head title="Dashboard Nasabah" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="flex items-center justify-between border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
-                    <h1 className="text-2xl font-bold tracking-tight">Dashboard Nasabah (Warga)</h1>
+            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
+                {/* Header */}
+                <div className="border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard Saya</h1>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        Pantau saldo poin, pendapatan rupiah, dan riwayat setoran sampah Anda.
+                    </p>
                 </div>
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
+
+                {/* Stat Cards */}
+                <div className="grid gap-4 sm:grid-cols-3">
+                    {statCards.map((card) => (
+                        <div
+                            key={card.label}
+                            className={`rounded-xl border ${card.border} bg-card p-5 shadow-xs flex items-center gap-4`}
+                        >
+                            <div className={`rounded-lg ${card.bg} p-3 shrink-0`}>
+                                <card.icon className={`size-6 ${card.color}`} />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-xs text-muted-foreground font-medium">{card.label}</p>
+                                <p className={`text-xl font-bold mt-0.5 ${card.color} truncate`}>{card.value}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+
+                {/* Recent Transactions */}
+                <div className="flex flex-col gap-3">
+                    <h2 className="text-base font-semibold text-foreground">5 Setoran Terakhir</h2>
+                    <div className="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border overflow-x-auto bg-card">
+                        <table className="w-full text-sm text-left">
+                            <thead className="text-xs uppercase bg-sidebar dark:bg-neutral-900 border-b border-sidebar-border/70 dark:border-sidebar-border">
+                                <tr>
+                                    <th className="px-5 py-3 font-semibold text-muted-foreground">Tanggal</th>
+                                    <th className="px-5 py-3 font-semibold text-muted-foreground">Jenis Sampah</th>
+                                    <th className="px-5 py-3 font-semibold text-muted-foreground">Berat</th>
+                                    <th className="px-5 py-3 font-semibold text-muted-foreground">Uang Diterima</th>
+                                    <th className="px-5 py-3 font-semibold text-muted-foreground">Poin</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-sidebar-border/50 dark:divide-sidebar-border/30">
+                                {recent_transactions.length > 0 ? (
+                                    recent_transactions.map((tx) => (
+                                        <tr key={tx.id} className="hover:bg-accent/40 transition-colors">
+                                            <td className="px-5 py-3 text-muted-foreground whitespace-nowrap">
+                                                {formatDate(tx.created_at)}
+                                            </td>
+                                            <td className="px-5 py-3 font-medium text-foreground">
+                                                {tx.sampah?.name ?? 'Sampah'}
+                                            </td>
+                                            <td className="px-5 py-3 text-muted-foreground">{tx.total_weight} kg</td>
+                                            <td className="px-5 py-3 font-semibold text-emerald-500 whitespace-nowrap">
+                                                {formatCurrency(tx.total_income)}
+                                            </td>
+                                            <td className="px-5 py-3 font-bold text-amber-500">
+                                                +{tx.point_received} poin
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={5} className="px-5 py-10 text-center text-muted-foreground">
+                                            Belum ada setoran sampah. Yuk mulai menabung sampah!
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </>
@@ -32,7 +144,7 @@ export default function Dashboard() {
 Dashboard.layout = {
     breadcrumbs: [
         {
-            title: 'Dashboard Nasabah',
+            title: 'Dashboard',
             href: nasabah.dashboard().url,
         },
     ],
