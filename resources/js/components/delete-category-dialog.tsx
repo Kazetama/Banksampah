@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import UserController from '@/actions/App/Http/Controllers/SuperAdmin/UserController';
+import SampahCategoryController from '@/actions/App/Http/Controllers/Admin/SampahCategoryController';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -9,18 +9,18 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import type { User } from '@/types';
+import type { SampahCategory } from '@/types';
 
-interface DeleteUserDialogProps {
+interface DeleteCategoryDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    user: User | null;
+    category: SampahCategory | null;
 }
 
-export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogProps) {
+export function DeleteCategoryDialog({ open, onOpenChange, category }: DeleteCategoryDialogProps) {
     const confirmDelete = () => {
-        if (user) {
-            router.delete(UserController.destroy({ user: user.id }).url, {
+        if (category) {
+            router.delete(SampahCategoryController.destroy({ sampah_category: category.id }).url, {
                 onSuccess: () => {
                     onOpenChange(false);
                 },
@@ -32,9 +32,9 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-sm">
                 <DialogHeader>
-                    <DialogTitle className="text-red-500">Hapus Pengguna</DialogTitle>
+                    <DialogTitle className="text-red-500">Hapus Kategori</DialogTitle>
                     <DialogDescription>
-                        Apakah Anda yakin ingin menghapus <strong>{user?.name}</strong>? Tindakan ini bersifat permanen dan tidak dapat dibatalkan.
+                        Apakah Anda yakin ingin menghapus kategori <strong>{category?.name}</strong>? Tindakan ini bersifat permanen dan tidak dapat dibatalkan.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-4 gap-2">

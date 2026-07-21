@@ -299,12 +299,12 @@ const SVGDonutChart = ({ data }: { data: { name: string; value: number }[] }) =>
 export default function Dashboard({ stats, charts }: DashboardProps) {
     return (
         <>
-            <Head title="Super Admin Dashboard" />
+            <Head title="Dashboard Super Admin" />
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
                 {/* Header */}
                 <div className="border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Global Analytics Dashboard</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Real-time indicators, waste flows, and customer registrations.</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard Analitik Global</h1>
+                    <p className="text-sm text-muted-foreground mt-1">Indikator waktu nyata, arus volume sampah, dan pendaftaran warga.</p>
                 </div>
 
                 {/* Stat Cards Grid */}
@@ -319,7 +319,7 @@ export default function Dashboard({ stats, charts }: DashboardProps) {
                         </div>
                         <div className="mt-4">
                             <span className="text-2xl font-bold text-foreground">{formatNumber(stats.total_nasabah)}</span>
-                            <span className="text-xs text-muted-foreground block mt-1">Registered members/citizens</span>
+                            <span className="text-xs text-muted-foreground block mt-1">Warga terdaftar sebagai nasabah</span>
                         </div>
                     </div>
 
@@ -333,7 +333,7 @@ export default function Dashboard({ stats, charts }: DashboardProps) {
                         </div>
                         <div className="mt-4">
                             <span className="text-2xl font-bold text-foreground">{formatNumber(stats.total_weight)} kg</span>
-                            <span className="text-xs text-muted-foreground block mt-1">Accumulated weight deposits</span>
+                            <span className="text-xs text-muted-foreground block mt-1">Total akumulasi berat timbunan</span>
                         </div>
                     </div>
 
@@ -347,7 +347,7 @@ export default function Dashboard({ stats, charts }: DashboardProps) {
                         </div>
                         <div className="mt-4">
                             <span className="text-2xl font-bold text-foreground">{formatCurrency(stats.total_cash_out)}</span>
-                            <span className="text-xs text-muted-foreground block mt-1">Total money paid to citizens</span>
+                            <span className="text-xs text-muted-foreground block mt-1">Kas dibayarkan kepada warga</span>
                         </div>
                     </div>
 
@@ -361,7 +361,7 @@ export default function Dashboard({ stats, charts }: DashboardProps) {
                         </div>
                         <div className="mt-4">
                             <span className="text-2xl font-bold text-foreground">{formatNumber(stats.total_points_claimed)} pts</span>
-                            <span className="text-xs text-muted-foreground block mt-1">Approved claimed rewards</span>
+                            <span className="text-xs text-muted-foreground block mt-1">Hadiah poin disetujui</span>
                         </div>
                     </div>
                 </div>

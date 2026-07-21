@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import UserController from '@/actions/App/Http/Controllers/SuperAdmin/UserController';
+import SampahController from '@/actions/App/Http/Controllers/Admin/SampahController';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -9,18 +9,18 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import type { User } from '@/types';
+import type { Sampah } from '@/types';
 
-interface DeleteUserDialogProps {
+interface DeleteSampahDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    user: User | null;
+    sampah: Sampah | null;
 }
 
-export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogProps) {
+export function DeleteSampahDialog({ open, onOpenChange, sampah }: DeleteSampahDialogProps) {
     const confirmDelete = () => {
-        if (user) {
-            router.delete(UserController.destroy({ user: user.id }).url, {
+        if (sampah) {
+            router.delete(SampahController.destroy({ sampah: sampah.id }).url, {
                 onSuccess: () => {
                     onOpenChange(false);
                 },
@@ -32,9 +32,9 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-sm">
                 <DialogHeader>
-                    <DialogTitle className="text-red-500">Hapus Pengguna</DialogTitle>
+                    <DialogTitle className="text-red-500">Hapus Jenis Sampah</DialogTitle>
                     <DialogDescription>
-                        Apakah Anda yakin ingin menghapus <strong>{user?.name}</strong>? Tindakan ini bersifat permanen dan tidak dapat dibatalkan.
+                        Apakah Anda yakin ingin menghapus jenis sampah <strong>{sampah?.name}</strong>? Tindakan ini bersifat permanen dan tidak dapat dibatalkan.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-4 gap-2">

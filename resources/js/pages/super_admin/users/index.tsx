@@ -68,15 +68,15 @@ export default function Index({ users, filters }: IndexProps) {
 
     return (
         <>
-            <Head title="User Management" />
+            <Head title="Manajemen Pengguna" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">User Management</h1>
-                        <p className="text-sm text-muted-foreground mt-1">Manage accounts, roles, addresses, and privileges.</p>
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">Manajemen Pengguna</h1>
+                        <p className="text-sm text-muted-foreground mt-1">Mengelola akun, peran (role), alamat, dan hak akses pengguna.</p>
                     </div>
                     <Button onClick={handleCreateClick} className="w-full sm:w-auto gap-2">
-                        <Plus className="size-4" /> Add New User
+                        <Plus className="size-4" /> Tambah Pengguna Baru
                     </Button>
                 </div>
 
@@ -85,7 +85,7 @@ export default function Index({ users, filters }: IndexProps) {
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
                         <Input
-                            placeholder="Search by name or email..."
+                            placeholder="Cari berdasarkan nama atau email..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="pl-9"
@@ -97,10 +97,10 @@ export default function Index({ users, filters }: IndexProps) {
                             onChange={(e) => setRoleFilter(e.target.value)}
                             className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
                         >
-                            <option value="all">All Roles</option>
+                            <option value="all">Semua Peran (Role)</option>
                             <option value="super_admin">Super Admin</option>
-                            <option value="admin">Admin</option>
-                            <option value="nasabah">Nasabah</option>
+                            <option value="admin">Admin (Petugas)</option>
+                            <option value="nasabah">Nasabah (Warga)</option>
                         </select>
                     </div>
                 </div>
@@ -110,11 +110,11 @@ export default function Index({ users, filters }: IndexProps) {
                     <table className="w-full text-sm text-left">
                         <thead className="text-xs uppercase bg-sidebar dark:bg-neutral-900 border-b border-sidebar-border/70 dark:border-sidebar-border">
                             <tr>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">User</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Role</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Phone Number</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Address</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground text-right">Actions</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Pengguna</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Peran</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Nomor Telepon</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Alamat</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-sidebar-border/50 dark:divide-sidebar-border/30">
@@ -159,7 +159,7 @@ export default function Index({ users, filters }: IndexProps) {
                             ) : (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                                        No users found.
+                                        Pengguna tidak ditemukan.
                                     </td>
                                 </tr>
                             )}
@@ -171,7 +171,7 @@ export default function Index({ users, filters }: IndexProps) {
                 {users.total > users.per_page && (
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-sidebar-border/70 pt-4 dark:border-sidebar-border">
                         <div className="text-xs text-muted-foreground text-center sm:text-left">
-                            Showing {users.from} to {users.to} of {users.total} users
+                            Menampilkan {users.from} hingga {users.to} dari {users.total} pengguna
                         </div>
                         <div className="flex flex-wrap justify-center gap-1">
                             {users.links.map((link, idx) => (
@@ -212,7 +212,7 @@ export default function Index({ users, filters }: IndexProps) {
 Index.layout = {
     breadcrumbs: [
         {
-            title: 'User Management',
+            title: 'Manajemen Pengguna',
             href: '#',
         },
     ],

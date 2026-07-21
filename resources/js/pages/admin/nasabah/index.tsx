@@ -1,26 +1,30 @@
 import { Head, router } from '@inertiajs/react';
-import { Search } from 'lucide-react';
+import { KeyRound, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { ResetNasabahPasswordDialog } from '@/components/reset-nasabah-password-dialog';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import superAdmin from '@/routes/super_admin';
-import type { AuditLog, PaginatedData } from '@/types';
+import admin from '@/routes/admin';
+import type { User, PaginatedData } from '@/types';
 
 interface IndexProps {
-    logs: PaginatedData<AuditLog>;
+    nasabahs: PaginatedData<User>;
     filters: {
         search?: string;
     };
 }
 
-export default function Index({ logs, filters }: IndexProps) {
+export default function Index({ nasabahs, filters }: IndexProps) {
     const [search, setSearch] = useState(filters.search || '');
+    const [isResetOpen, setIsResetOpen] = useState(false);
+    const [selectedNasabah, setSelectedNasabah] = useState<User | null>(null);
 
-    // Debounce search updates
+    // Debounce search
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             if (search !== (filters.search || '')) {
                 router.get(
-                    superAdmin.audit_logs.index().url,
+                    admin.nasabah.index().url,
                     { search },
                     { preserveState: true, replace: true }
                 );
@@ -30,40 +34,26 @@ export default function Index({ logs, filters }: IndexProps) {
         return () => clearTimeout(delayDebounceFn);
     }, [search, filters.search]);
 
-    const formatAction = (action: string) => {
-        return action
-            .replace(/_/g, ' ')
-            .split(' ')
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
-    };
-
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-
-        return date.toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+    const handleResetClick = (nasabah: User) => {
+        setSelectedNasabah(nasabah);
+        setIsResetOpen(true);
     };
 
     return (
         <>
-            <Head title="Log Audit Sistem" />
+            <Head title="Direktori Warga" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                {/* Header */}
                 <div className="border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Log Audit Sistem</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Memantau semua tindakan administratif dan aktivitas keamanan sistem.</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Direktori Warga</h1>
+                    <p className="text-sm text-muted-foreground mt-1">Memantau warga terdaftar, saldo poin tabungan, dan reset kata sandi.</p>
                 </div>
 
                 {/* Filters */}
                 <div className="relative">
                     <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
                     <Input
-                        placeholder="Cari log berdasarkan aktor, aksi, atau deskripsi..."
+                        placeholder="Cari warga berdasarkan nama atau email..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="pl-9"
@@ -71,44 +61,49 @@ export default function Index({ logs, filters }: IndexProps) {
                 </div>
 
                 {/* Datatable */}
-                <div className="flex-1 min-h-[400px] border border-sidebar-border/70 dark:border-sidebar-border rounded-lg overflow-x-auto bg-card">
+                <div className="border border-sidebar-border/70 dark:border-sidebar-border rounded-lg overflow-x-auto bg-card">
                     <table className="w-full text-sm text-left">
                         <thead className="text-xs uppercase bg-sidebar dark:bg-neutral-900 border-b border-sidebar-border/70 dark:border-sidebar-border">
                             <tr>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Waktu</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Aktor</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Aksi</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Alamat IP</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Deskripsi</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Nama</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Email</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Saldo (Poin)</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Nomor Telepon</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Alamat</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-sidebar-border/50 dark:divide-sidebar-border/30">
-                            {logs.data.length > 0 ? (
-                                logs.data.map((log) => (
-                                    <tr key={log.id} className="hover:bg-accent/40 transition-colors">
-                                        <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
-                                            {formatDate(log.created_at)}
+                            {nasabahs.data.length > 0 ? (
+                                nasabahs.data.map((nasabah) => (
+                                    <tr key={nasabah.id} className="hover:bg-accent/40 transition-colors">
+                                        <td className="px-6 py-4 font-medium text-foreground">{nasabah.name}</td>
+                                        <td className="px-6 py-4 text-muted-foreground">{nasabah.email}</td>
+                                        <td className="px-6 py-4 font-semibold text-foreground">
+                                            {nasabah.points ? (nasabah.points.total_points as number) : 0} poin
                                         </td>
-                                        <td className="px-6 py-4 font-medium text-foreground">
-                                            {log.user ? log.user.name : `Pengguna Sistem (ID: ${log.user_id})`}
+                                        <td className="px-6 py-4 text-muted-foreground">
+                                            {nasabah.phone_number || '-'}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-sidebar border border-sidebar-border/70 dark:border-sidebar-border text-foreground">
-                                                {formatAction(log.action)}
-                                            </span>
+                                        <td className="px-6 py-4 text-muted-foreground max-w-xs truncate">
+                                            {nasabah.address || '-'}
                                         </td>
-                                        <td className="px-6 py-4 text-muted-foreground text-xs font-mono">
-                                            {log.ip_address || '-'}
-                                        </td>
-                                        <td className="px-6 py-4 text-muted-foreground max-w-sm whitespace-normal break-words">
-                                            {log.description}
+                                        <td className="px-6 py-4 text-right">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleResetClick(nasabah)}
+                                                className="gap-1.5"
+                                            >
+                                                <KeyRound className="size-3.5" /> Reset Sandi
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                                        Log audit tidak ditemukan.
+                                    <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
+                                        Warga tidak ditemukan.
                                     </td>
                                 </tr>
                             )}
@@ -117,13 +112,13 @@ export default function Index({ logs, filters }: IndexProps) {
                 </div>
 
                 {/* Pagination */}
-                {logs.total > logs.per_page && (
+                {nasabahs.total > nasabahs.per_page && (
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-sidebar-border/70 pt-4 dark:border-sidebar-border">
                         <div className="text-xs text-muted-foreground text-center sm:text-left">
-                            Menampilkan {logs.from} hingga {logs.to} dari {logs.total} entri log
+                            Menampilkan {nasabahs.from} hingga {nasabahs.to} dari {nasabahs.total} warga
                         </div>
                         <div className="flex flex-wrap justify-center gap-1">
-                            {logs.links.map((link, idx) => (
+                            {nasabahs.links.map((link, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => {
@@ -148,6 +143,9 @@ export default function Index({ logs, filters }: IndexProps) {
                     </div>
                 )}
             </div>
+
+            {/* Reset Password Dialog */}
+            <ResetNasabahPasswordDialog open={isResetOpen} onOpenChange={setIsResetOpen} nasabah={selectedNasabah} />
         </>
     );
 }
@@ -155,8 +153,8 @@ export default function Index({ logs, filters }: IndexProps) {
 Index.layout = {
     breadcrumbs: [
         {
-            title: 'Log Audit Sistem',
-            href: '#',
+            title: 'Direktori Warga',
+            href: admin.nasabah.index().url,
         },
     ],
 };

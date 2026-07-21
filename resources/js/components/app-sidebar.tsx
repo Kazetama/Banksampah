@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Activity, BookOpen, FolderGit2, LayoutGrid, Users } from 'lucide-react';
+import { Activity, Award, BookOpen, FolderGit2, Gift, LayoutGrid, Scale, Trash2, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -31,12 +31,12 @@ export function AppSidebar() {
             icon: LayoutGrid,
         });
         mainNavItems.push({
-            title: 'User Management',
+            title: 'Manajemen Pengguna',
             href: superAdmin.users.index().url,
             icon: Users,
         });
         mainNavItems.push({
-            title: 'System Audit Logs',
+            title: 'Log Audit Sistem',
             href: superAdmin.audit_logs.index().url,
             icon: Activity,
         });
@@ -46,9 +46,34 @@ export function AppSidebar() {
             href: admin.dashboard().url,
             icon: LayoutGrid,
         });
+        mainNavItems.push({
+            title: 'POS Setor Sampah',
+            href: admin.transactions.index().url,
+            icon: Scale,
+        });
+        mainNavItems.push({
+            title: 'Persetujuan Hadiah',
+            href: admin.redemptions.index().url,
+            icon: Gift,
+        });
+        mainNavItems.push({
+            title: 'Inventaris Sampah',
+            href: admin.sampah.index().url,
+            icon: Trash2,
+        });
+        mainNavItems.push({
+            title: 'Inventaris Hadiah',
+            href: admin.rewards.index().url,
+            icon: Award,
+        });
+        mainNavItems.push({
+            title: 'Direktori Warga',
+            href: admin.nasabah.index().url,
+            icon: Users,
+        });
     } else if (role === 'nasabah') {
         mainNavItems.push({
-            title: 'Dashboard',
+            title: 'Dashboard Warga',
             href: nasabah.dashboard().url,
             icon: LayoutGrid,
         });

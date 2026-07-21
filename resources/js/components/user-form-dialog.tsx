@@ -74,55 +74,55 @@ export function UserFormDialog({ open, onOpenChange, user }: UserFormDialogProps
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{user ? 'Edit User Account' : 'Add New User'}</DialogTitle>
+                    <DialogTitle>{user ? 'Ubah Akun Pengguna' : 'Tambah Pengguna Baru'}</DialogTitle>
                     <DialogDescription>
                         {user
-                            ? 'Update user details. Leave password blank if you do not want to change it.'
-                            : 'Create a new user account. Fill in all the fields below.'}
+                            ? 'Perbarui rincian pengguna. Kosongkan kata sandi jika tidak ingin mengubahnya.'
+                            : 'Buat akun pengguna baru. Isi semua kolom di bawah ini.'}
                     </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Full Name</Label>
+                        <Label htmlFor="name">Nama Lengkap</Label>
                         <Input
                             id="name"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="e.g. John Doe"
+                            placeholder="Contoh: Budi Santoso"
                             required
                         />
                         <InputError message={errors.name} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email Address</Label>
+                        <Label htmlFor="email">Alamat Email</Label>
                         <Input
                             id="email"
                             type="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
-                            placeholder="e.g. john@example.com"
+                            placeholder="Contoh: budi@gmail.com"
                             required
                         />
                         <InputError message={errors.email} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
+                        <Label htmlFor="password">Kata Sandi (Password)</Label>
                         <Input
                             id="password"
                             type="password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            placeholder={user ? 'Leave blank to keep current' : 'Min. 8 characters'}
+                            placeholder={user ? 'Kosongkan jika tidak ingin mengubah' : 'Minimal 8 karakter'}
                             required={!user}
                         />
                         <InputError message={errors.password} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="role">User Role</Label>
+                        <Label htmlFor="role">Peran Pengguna (Role)</Label>
                         <select
                             id="role"
                             value={data.role}
@@ -137,23 +137,23 @@ export function UserFormDialog({ open, onOpenChange, user }: UserFormDialogProps
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="phone_number">Phone Number</Label>
+                        <Label htmlFor="phone_number">Nomor Telepon</Label>
                         <Input
                             id="phone_number"
                             value={data.phone_number}
                             onChange={(e) => setData('phone_number', e.target.value)}
-                            placeholder="e.g. 081234567890"
+                            placeholder="Contoh: 081234567890"
                         />
                         <InputError message={errors.phone_number} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="address">Address</Label>
+                        <Label htmlFor="address">Alamat Rumah</Label>
                         <textarea
                             id="address"
                             value={data.address}
                             onChange={(e) => setData('address', e.target.value)}
-                            placeholder="Full home address..."
+                            placeholder="Alamat rumah lengkap..."
                             rows={3}
                             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
                         />
@@ -162,10 +162,10 @@ export function UserFormDialog({ open, onOpenChange, user }: UserFormDialogProps
 
                     <DialogFooter className="mt-6">
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                            Cancel
+                            Batal
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            {user ? 'Update User' : 'Create User'}
+                            {user ? 'Simpan Perubahan' : 'Tambah Pengguna'}
                         </Button>
                     </DialogFooter>
                 </form>
