@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { Activity, BookOpen, FolderGit2, LayoutGrid, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -26,19 +26,29 @@ export function AppSidebar() {
 
     if (role === 'super_admin') {
         mainNavItems.push({
-            title: 'Super Admin Dashboard',
+            title: 'Dashboard',
             href: superAdmin.dashboard().url,
             icon: LayoutGrid,
         });
+        mainNavItems.push({
+            title: 'User Management',
+            href: superAdmin.users.index().url,
+            icon: Users,
+        });
+        mainNavItems.push({
+            title: 'System Audit Logs',
+            href: superAdmin.audit_logs.index().url,
+            icon: Activity,
+        });
     } else if (role === 'admin') {
         mainNavItems.push({
-            title: 'Admin Dashboard',
+            title: 'Dashboard',
             href: admin.dashboard().url,
             icon: LayoutGrid,
         });
     } else if (role === 'nasabah') {
         mainNavItems.push({
-            title: 'Nasabah Dashboard',
+            title: 'Dashboard',
             href: nasabah.dashboard().url,
             icon: LayoutGrid,
         });

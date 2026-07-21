@@ -1,0 +1,219 @@
+import { Head, router } from '@inertiajs/react';
+import { Edit, Plus, Search, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { DeleteUserDialog } from '@/components/delete-user-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { UserFormDialog } from '@/components/user-form-dialog';
+import superAdmin from '@/routes/super_admin';
+import type { User, PaginatedData } from '@/types';
+
+interface IndexProps {
+    users: PaginatedData<User>;
+    filters: {
+        search?: string;
+        role?: string;
+    };
+}
+
+export default function Index({ users, filters }: IndexProps) {
+    const [search, setSearch] = useState(filters.search || '');
+    const [roleFilter, setRoleFilter] = useState(filters.role || 'all');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [userToEdit, setUserToEdit] = useState<User | null>(null);
+    const [userToDelete, setUserToDelete] = useState<User | null>(null);
+
+    // Debounce search and filter updates
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            if (search !== (filters.search || '') || roleFilter !== (filters.role || 'all')) {
+                router.get(
+                    superAdmin.users.index().url,
+                    { search, role: roleFilter },
+                    { preserveState: true, replace: true }
+                );
+            }
+        }, 400);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [search, roleFilter, filters.search, filters.role]);
+
+    const handleCreateClick = () => {
+        setUserToEdit(null);
+        setIsModalOpen(true);
+    };
+
+    const handleEditClick = (user: User) => {
+        setUserToEdit(user);
+        setIsModalOpen(true);
+    };
+
+    const handleDeleteClick = (user: User) => {
+        setUserToDelete(user);
+        setIsDeleteOpen(true);
+    };
+
+    const getRoleBadge = (role: string) => {
+        switch (role) {
+            case 'super_admin':
+                return <Badge className="bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20">Super Admin</Badge>;
+            case 'admin':
+                return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20">Admin</Badge>;
+            default:
+                return <Badge className="bg-green-500/10 text-green-500 border-green-500/20 hover:bg-green-500/20">Nasabah</Badge>;
+        }
+    };
+
+    return (
+        <>
+            <Head title="User Management" />
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">User Management</h1>
+                        <p className="text-sm text-muted-foreground mt-1">Manage accounts, roles, addresses, and privileges.</p>
+                    </div>
+                    <Button onClick={handleCreateClick} className="w-full sm:w-auto gap-2">
+                        <Plus className="size-4" /> Add New User
+                    </Button>
+                </div>
+
+                {/* Filters */}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search by name or email..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-9"
+                        />
+                    </div>
+                    <div className="w-full sm:w-48">
+                        <select
+                            value={roleFilter}
+                            onChange={(e) => setRoleFilter(e.target.value)}
+                            className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                        >
+                            <option value="all">All Roles</option>
+                            <option value="super_admin">Super Admin</option>
+                            <option value="admin">Admin</option>
+                            <option value="nasabah">Nasabah</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* Datatable */}
+                <div className="flex-1 min-h-[400px] border border-sidebar-border/70 dark:border-sidebar-border rounded-lg overflow-x-auto bg-card">
+                    <table className="w-full text-sm text-left">
+                        <thead className="text-xs uppercase bg-sidebar dark:bg-neutral-900 border-b border-sidebar-border/70 dark:border-sidebar-border">
+                            <tr>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">User</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Role</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Phone Number</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">Address</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-sidebar-border/50 dark:divide-sidebar-border/30">
+                            {users.data.length > 0 ? (
+                                users.data.map((user) => (
+                                    <tr key={user.id} className="hover:bg-accent/40 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col">
+                                                <span className="font-medium text-foreground">{user.name}</span>
+                                                <span className="text-xs text-muted-foreground">{user.email}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">{getRoleBadge(user.role)}</td>
+                                        <td className="px-6 py-4 text-muted-foreground">
+                                            {user.phone_number || '-'}
+                                        </td>
+                                        <td className="px-6 py-4 text-muted-foreground max-w-xs truncate">
+                                            {user.address || '-'}
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() => handleEditClick(user)}
+                                                    className="size-8"
+                                                >
+                                                    <Edit className="size-3.5" />
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() => handleDeleteClick(user)}
+                                                    className="size-8 text-red-500 hover:text-red-600 hover:bg-red-500/10 border-red-500/10"
+                                                >
+                                                    <Trash2 className="size-3.5" />
+                                                </Button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
+                                        No users found.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination */}
+                {users.total > users.per_page && (
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-sidebar-border/70 pt-4 dark:border-sidebar-border">
+                        <div className="text-xs text-muted-foreground text-center sm:text-left">
+                            Showing {users.from} to {users.to} of {users.total} users
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-1">
+                            {users.links.map((link, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => {
+                                        if (link.url) {
+                                            router.get(
+                                                link.url,
+                                                { search, role: roleFilter },
+                                                { preserveState: true, replace: true }
+                                            );
+                                        }
+                                    }}
+                                    disabled={!link.url}
+                                    className={`px-3 py-1.5 text-xs border rounded-md transition-colors ${
+                                        link.active
+                                            ? 'bg-primary text-primary-foreground border-transparent font-medium'
+                                            : 'hover:bg-accent text-foreground border-sidebar-border/70 dark:border-sidebar-border'
+                                    } ${!link.url ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Create/Edit User Dialog Modal */}
+            <UserFormDialog open={isModalOpen} onOpenChange={setIsModalOpen} user={userToEdit} />
+
+            {/* Confirm Delete Dialog */}
+            <DeleteUserDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen} user={userToDelete} />
+        </>
+    );
+}
+
+Index.layout = {
+    breadcrumbs: [
+        {
+            title: 'User Management',
+            href: '#',
+        },
+    ],
+};
