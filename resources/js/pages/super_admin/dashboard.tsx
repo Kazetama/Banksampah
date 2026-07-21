@@ -1,12 +1,15 @@
 import { Head } from '@inertiajs/react';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import { dashboard } from '@/routes';
+import superAdmin from '@/routes/super_admin';
 
 export default function Dashboard() {
     return (
         <>
-            <Head title="Dashboard" />
+            <Head title="Super Admin Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                <div className="flex items-center justify-between border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
+                    <h1 className="text-2xl font-bold tracking-tight">Super Admin Dashboard</h1>
+                </div>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
                         <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
@@ -29,8 +32,8 @@ export default function Dashboard() {
 Dashboard.layout = {
     breadcrumbs: [
         {
-            title: 'Dashboard',
-            href: dashboard(),
+            title: 'Super Admin Dashboard',
+            href: superAdmin.dashboard().url,
         },
     ],
 };
