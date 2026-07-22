@@ -39,7 +39,15 @@ const formatNumber = (value: number) => {
 };
 
 // 1. Custom SVG Line Chart Component (for Trends)
-const SVGLineChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: string; color: string }) => {
+const SVGLineChart = ({
+    data,
+    dataKey,
+    color,
+}: {
+    data: ChartNode[];
+    dataKey: string;
+    color: string;
+}) => {
     const height = 150;
     const width = 500;
     const padding = 20;
@@ -52,7 +60,10 @@ const SVGLineChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: st
     const points = data.map((d, index) => {
         const x = padding + (index / (data.length - 1)) * (width - padding * 2);
         const val = d[dataKey] as number;
-        const y = height - padding - ((val - minVal) / range) * (height - padding * 2);
+        const y =
+            height -
+            padding -
+            ((val - minVal) / range) * (height - padding * 2);
 
         return { x, y, val, label: d.name };
     });
@@ -63,17 +74,35 @@ const SVGLineChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: st
     }, '');
 
     // Area path for gradient fill
-    const areaD = points.length > 0
-        ? `${pathD} L ${points[points.length - 1].x} ${height - padding} L ${points[0].x} ${height - padding} Z`
-        : '';
+    const areaD =
+        points.length > 0
+            ? `${pathD} L ${points[points.length - 1].x} ${height - padding} L ${points[0].x} ${height - padding} Z`
+            : '';
 
     return (
         <div className="relative w-full">
-            <svg viewBox={`0 0 ${width} ${height}`} className="w-full overflow-visible">
+            <svg
+                viewBox={`0 0 ${width} ${height}`}
+                className="w-full overflow-visible"
+            >
                 <defs>
-                    <linearGradient id={`grad-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={color} stopOpacity="0.25" />
-                        <stop offset="100%" stopColor={color} stopOpacity="0.0" />
+                    <linearGradient
+                        id={`grad-${dataKey}`}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                    >
+                        <stop
+                            offset="0%"
+                            stopColor={color}
+                            stopOpacity="0.25"
+                        />
+                        <stop
+                            offset="100%"
+                            stopColor={color}
+                            stopOpacity="0.0"
+                        />
                     </linearGradient>
                 </defs>
 
@@ -84,8 +113,22 @@ const SVGLineChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: st
 
                     return (
                         <g key={idx} className="opacity-20 dark:opacity-10">
-                            <line x1={padding} y1={y} x2={width - padding} y2={y} stroke="currentColor" strokeDasharray="3,3" />
-                            <text x={padding - 5} y={y + 4} textAnchor="end" className="text-[9px] fill-current">{formatNumber(val)}</text>
+                            <line
+                                x1={padding}
+                                y1={y}
+                                x2={width - padding}
+                                y2={y}
+                                stroke="currentColor"
+                                strokeDasharray="3,3"
+                            />
+                            <text
+                                x={padding - 5}
+                                y={y + 4}
+                                textAnchor="end"
+                                className="fill-current text-[9px]"
+                            >
+                                {formatNumber(val)}
+                            </text>
                         </g>
                     );
                 })}
@@ -120,7 +163,7 @@ const SVGLineChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: st
                             x={p.x}
                             y={p.y - 10}
                             textAnchor="middle"
-                            className="text-[8px] fill-foreground font-semibold opacity-0 group-hover/dot:opacity-100 transition-opacity bg-background p-1 rounded border shadow-sm"
+                            className="rounded border bg-background fill-foreground p-1 text-[8px] font-semibold opacity-0 shadow-sm transition-opacity group-hover/dot:opacity-100"
                         >
                             {formatNumber(p.val)}
                         </text>
@@ -134,7 +177,7 @@ const SVGLineChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: st
                         x={p.x}
                         y={height - 4}
                         textAnchor="middle"
-                        className="text-[9px] fill-muted-foreground font-medium"
+                        className="fill-muted-foreground text-[9px] font-medium"
                     >
                         {p.label}
                     </text>
@@ -145,7 +188,15 @@ const SVGLineChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: st
 };
 
 // 2. Custom SVG Bar Chart Component (for Cashflow)
-const SVGBarChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: string; color: string }) => {
+const SVGBarChart = ({
+    data,
+    dataKey,
+    color,
+}: {
+    data: ChartNode[];
+    dataKey: string;
+    color: string;
+}) => {
     const height = 150;
     const width = 500;
     const padding = 20;
@@ -161,7 +212,10 @@ const SVGBarChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: str
 
     return (
         <div className="relative w-full">
-            <svg viewBox={`0 0 ${width} ${height}`} className="w-full overflow-visible">
+            <svg
+                viewBox={`0 0 ${width} ${height}`}
+                className="w-full overflow-visible"
+            >
                 {/* Horizontal Gridlines */}
                 {[0, 0.5, 1].map((ratio, idx) => {
                     const y = padding + ratio * (height - padding * 2);
@@ -169,8 +223,20 @@ const SVGBarChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: str
 
                     return (
                         <g key={idx} className="opacity-20 dark:opacity-10">
-                            <line x1={padding} y1={y} x2={width - padding} y2={y} stroke="currentColor" strokeDasharray="3,3" />
-                            <text x={padding - 5} y={y + 4} textAnchor="end" className="text-[9px] fill-current">
+                            <line
+                                x1={padding}
+                                y1={y}
+                                x2={width - padding}
+                                y2={y}
+                                stroke="currentColor"
+                                strokeDasharray="3,3"
+                            />
+                            <text
+                                x={padding - 5}
+                                y={y + 4}
+                                textAnchor="end"
+                                className="fill-current text-[9px]"
+                            >
                                 {val >= 1000 ? `${val / 1000}k` : val}
                             </text>
                         </g>
@@ -180,7 +246,8 @@ const SVGBarChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: str
                 {/* Bars */}
                 {data.map((d, index) => {
                     const val = d[dataKey] as number;
-                    const barHeight = ((val - minVal) / range) * (height - padding * 2);
+                    const barHeight =
+                        ((val - minVal) / range) * (height - padding * 2);
                     const x = padding + index * (barWidth + gap) + gap / 2;
                     const y = height - padding - barHeight;
 
@@ -199,15 +266,17 @@ const SVGBarChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: str
                                 x={x + barWidth / 2}
                                 y={y - 8}
                                 textAnchor="middle"
-                                className="text-[8px] fill-foreground font-semibold opacity-0 group-hover/bar:opacity-100 transition-opacity"
+                                className="fill-foreground text-[8px] font-semibold opacity-0 transition-opacity group-hover/bar:opacity-100"
                             >
-                                {val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
+                                {val >= 1000
+                                    ? `${(val / 1000).toFixed(1)}k`
+                                    : val}
                             </text>
                             <text
                                 x={x + barWidth / 2}
                                 y={height - 4}
                                 textAnchor="middle"
-                                className="text-[9px] fill-muted-foreground font-medium"
+                                className="fill-muted-foreground text-[9px] font-medium"
                             >
                                 {d.name}
                             </text>
@@ -220,7 +289,11 @@ const SVGBarChart = ({ data, dataKey, color }: { data: ChartNode[]; dataKey: str
 };
 
 // 3. Custom SVG Donut / Category Chart
-const SVGDonutChart = ({ data }: { data: { name: string; value: number }[] }) => {
+const SVGDonutChart = ({
+    data,
+}: {
+    data: { name: string; value: number }[];
+}) => {
     const size = 180;
     const strokeWidth = 24;
     const radius = (size - strokeWidth) / 2;
@@ -235,9 +308,13 @@ const SVGDonutChart = ({ data }: { data: { name: string; value: number }[] }) =>
     let accumulatedAngle = 0;
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-around gap-6 w-full py-2">
-            <div className="relative w-44 h-44 flex items-center justify-center">
-                <svg width={size} height={size} className="transform -rotate-90">
+        <div className="flex w-full flex-col items-center justify-around gap-6 py-2 sm:flex-row">
+            <div className="relative flex h-44 w-44 items-center justify-center">
+                <svg
+                    width={size}
+                    height={size}
+                    className="-rotate-90 transform"
+                >
                     {total === 0 ? (
                         <circle
                             cx={center}
@@ -250,7 +327,8 @@ const SVGDonutChart = ({ data }: { data: { name: string; value: number }[] }) =>
                     ) : (
                         data.map((d, idx) => {
                             const percentage = d.value / total;
-                            const strokeDashoffset = circumference - percentage * circumference;
+                            const strokeDashoffset =
+                                circumference - percentage * circumference;
                             const rotation = (accumulatedAngle / total) * 360;
                             accumulatedAngle += d.value;
 
@@ -266,15 +344,19 @@ const SVGDonutChart = ({ data }: { data: { name: string; value: number }[] }) =>
                                     strokeDasharray={circumference}
                                     strokeDashoffset={strokeDashoffset}
                                     transform={`rotate(${rotation} ${center} ${center})`}
-                                    className="transition-all duration-500 hover:stroke-[28px] cursor-pointer"
+                                    className="cursor-pointer transition-all duration-500 hover:stroke-[28px]"
                                 />
                             );
                         })
                     )}
                 </svg>
                 <div className="absolute flex flex-col items-center justify-center text-center">
-                    <span className="text-xl font-bold text-foreground">{formatNumber(total)}</span>
-                    <span className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground">Total Kg</span>
+                    <span className="text-xl font-bold text-foreground">
+                        {formatNumber(total)}
+                    </span>
+                    <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                        Total Kg
+                    </span>
                 </div>
             </div>
 
@@ -282,12 +364,20 @@ const SVGDonutChart = ({ data }: { data: { name: string; value: number }[] }) =>
                 {data.map((d, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-xs">
                         <span
-                            className="size-3 rounded-xs shrink-0"
-                            style={{ backgroundColor: colors[idx % colors.length] }}
+                            className="size-3 shrink-0 rounded-xs"
+                            style={{
+                                backgroundColor: colors[idx % colors.length],
+                            }}
                         />
-                        <span className="font-medium text-foreground">{d.name}</span>
+                        <span className="font-medium text-foreground">
+                            {d.name}
+                        </span>
                         <span className="text-muted-foreground">
-                            ({total > 0 ? ((d.value / total) * 100).toFixed(1) : 0}%)
+                            (
+                            {total > 0
+                                ? ((d.value / total) * 100).toFixed(1)
+                                : 0}
+                            %)
                         </span>
                     </div>
                 ))}
@@ -303,65 +393,94 @@ export default function Dashboard({ stats, charts }: DashboardProps) {
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
                 {/* Header */}
                 <div className="border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard Analitik Global</h1>
-                    <p className="text-sm text-muted-foreground mt-1">Indikator waktu nyata, arus volume sampah, dan pendaftaran warga.</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                        Dashboard Analitik Global
+                    </h1>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Indikator waktu nyata, arus volume sampah, dan
+                        pendaftaran warga.
+                    </p>
                 </div>
 
                 {/* Stat Cards Grid */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Card 1: Nasabah */}
-                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs hover:shadow-md transition-shadow">
+                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs transition-shadow hover:shadow-md">
                         <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-muted-foreground">Total Nasabah</span>
+                            <span className="text-sm font-medium text-muted-foreground">
+                                Total Nasabah
+                            </span>
                             <div className="rounded-lg bg-green-500/10 p-2 text-green-500">
                                 <Users className="size-4" />
                             </div>
                         </div>
                         <div className="mt-4">
-                            <span className="text-2xl font-bold text-foreground">{formatNumber(stats.total_nasabah)}</span>
-                            <span className="text-xs text-muted-foreground block mt-1">Warga terdaftar sebagai nasabah</span>
+                            <span className="text-2xl font-bold text-foreground">
+                                {formatNumber(stats.total_nasabah)}
+                            </span>
+                            <span className="mt-1 block text-xs text-muted-foreground">
+                                Warga terdaftar sebagai nasabah
+                            </span>
                         </div>
                     </div>
 
                     {/* Card 2: Waste Weight */}
-                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs hover:shadow-md transition-shadow">
+                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs transition-shadow hover:shadow-md">
                         <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-muted-foreground">Sampah Terkumpul</span>
+                            <span className="text-sm font-medium text-muted-foreground">
+                                Sampah Terkumpul
+                            </span>
                             <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500">
                                 <Trash2 className="size-4" />
                             </div>
                         </div>
                         <div className="mt-4">
-                            <span className="text-2xl font-bold text-foreground">{formatNumber(stats.total_weight)} kg</span>
-                            <span className="text-xs text-muted-foreground block mt-1">Total akumulasi berat timbunan</span>
+                            <span className="text-2xl font-bold text-foreground">
+                                {formatNumber(stats.total_weight)} kg
+                            </span>
+                            <span className="mt-1 block text-xs text-muted-foreground">
+                                Total akumulasi berat timbunan
+                            </span>
                         </div>
                     </div>
 
                     {/* Card 3: Cashflow Out */}
-                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs hover:shadow-md transition-shadow">
+                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs transition-shadow hover:shadow-md">
                         <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-muted-foreground">Arus Kas Keluar</span>
+                            <span className="text-sm font-medium text-muted-foreground">
+                                Arus Kas Keluar
+                            </span>
                             <div className="rounded-lg bg-red-500/10 p-2 text-red-500">
                                 <DollarSign className="size-4" />
                             </div>
                         </div>
                         <div className="mt-4">
-                            <span className="text-2xl font-bold text-foreground">{formatCurrency(stats.total_cash_out)}</span>
-                            <span className="text-xs text-muted-foreground block mt-1">Kas dibayarkan kepada warga</span>
+                            <span className="text-2xl font-bold text-foreground">
+                                {formatCurrency(stats.total_cash_out)}
+                            </span>
+                            <span className="mt-1 block text-xs text-muted-foreground">
+                                Kas dibayarkan kepada warga
+                            </span>
                         </div>
                     </div>
 
                     {/* Card 4: Points Claimed */}
-                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs hover:shadow-md transition-shadow">
+                    <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs transition-shadow hover:shadow-md">
                         <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-muted-foreground">Poin Ditukarkan</span>
+                            <span className="text-sm font-medium text-muted-foreground">
+                                Poin Ditukarkan
+                            </span>
                             <div className="rounded-lg bg-yellow-500/10 p-2 text-yellow-500">
                                 <Shield className="size-4" />
                             </div>
                         </div>
                         <div className="mt-4">
-                            <span className="text-2xl font-bold text-foreground">{formatNumber(stats.total_points_claimed)} pts</span>
-                            <span className="text-xs text-muted-foreground block mt-1">Hadiah poin disetujui</span>
+                            <span className="text-2xl font-bold text-foreground">
+                                {formatNumber(stats.total_points_claimed)} pts
+                            </span>
+                            <span className="mt-1 block text-xs text-muted-foreground">
+                                Hadiah poin disetujui
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -370,30 +489,58 @@ export default function Dashboard({ stats, charts }: DashboardProps) {
                 <div className="grid gap-6 md:grid-cols-2">
                     {/* Chart 1: Weight Trend */}
                     <div className="rounded-xl border border-sidebar-border/70 bg-card p-5">
-                        <h3 className="text-sm font-semibold text-foreground mb-4">Tren Penyetoran Sampah (6 Bulan Terakhir)</h3>
-                        <SVGLineChart data={charts.weight_trend} dataKey="weight" color="#3B82F6" />
-                        <div className="text-[10px] text-muted-foreground text-center mt-2 font-medium">Volume Sampah (kg)</div>
+                        <h3 className="mb-4 text-sm font-semibold text-foreground">
+                            Tren Penyetoran Sampah (6 Bulan Terakhir)
+                        </h3>
+                        <SVGLineChart
+                            data={charts.weight_trend}
+                            dataKey="weight"
+                            color="#3B82F6"
+                        />
+                        <div className="mt-2 text-center text-[10px] font-medium text-muted-foreground">
+                            Volume Sampah (kg)
+                        </div>
                     </div>
 
                     {/* Chart 2: Cashflow Trend */}
                     <div className="rounded-xl border border-sidebar-border/70 bg-card p-5">
-                        <h3 className="text-sm font-semibold text-foreground mb-4">Kas Keluar Penimbangan (6 Bulan Terakhir)</h3>
-                        <SVGBarChart data={charts.cashflow} dataKey="amount" color="#EF4444" />
-                        <div className="text-[10px] text-muted-foreground text-center mt-2 font-medium">Pembayaran Timbangan (Rp)</div>
+                        <h3 className="mb-4 text-sm font-semibold text-foreground">
+                            Kas Keluar Penimbangan (6 Bulan Terakhir)
+                        </h3>
+                        <SVGBarChart
+                            data={charts.cashflow}
+                            dataKey="amount"
+                            color="#EF4444"
+                        />
+                        <div className="mt-2 text-center text-[10px] font-medium text-muted-foreground">
+                            Pembayaran Timbangan (Rp)
+                        </div>
                     </div>
 
                     {/* Chart 3: User Growth */}
                     <div className="rounded-xl border border-sidebar-border/70 bg-card p-5">
-                        <h3 className="text-sm font-semibold text-foreground mb-4">Akumulasi Pertumbuhan Nasabah</h3>
-                        <SVGLineChart data={charts.user_growth} dataKey="users" color="#10B981" />
-                        <div className="text-[10px] text-muted-foreground text-center mt-2 font-medium">Total Anggota Terdaftar</div>
+                        <h3 className="mb-4 text-sm font-semibold text-foreground">
+                            Akumulasi Pertumbuhan Nasabah
+                        </h3>
+                        <SVGLineChart
+                            data={charts.user_growth}
+                            dataKey="users"
+                            color="#10B981"
+                        />
+                        <div className="mt-2 text-center text-[10px] font-medium text-muted-foreground">
+                            Total Anggota Terdaftar
+                        </div>
                     </div>
 
                     {/* Chart 4: Category Distribution */}
-                    <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 flex flex-col justify-between">
-                        <h3 className="text-sm font-semibold text-foreground mb-4">Komposisi Jenis Sampah Terkumpul</h3>
-                        <div className="flex-1 flex items-center justify-center">
-                            <SVGDonutChart data={charts.category_distribution} />
+                    <div className="flex flex-col justify-between rounded-xl border border-sidebar-border/70 bg-card p-5">
+                        <h3 className="mb-4 text-sm font-semibold text-foreground">
+                            Komposisi Jenis Sampah Terkumpul
+                        </h3>
+                        <div className="flex flex-1 items-center justify-center">
+                            <SVGDonutChart
+                                data={charts.category_distribution}
+                            />
                         </div>
                     </div>
                 </div>

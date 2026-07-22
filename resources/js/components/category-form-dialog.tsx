@@ -21,8 +21,21 @@ interface CategoryFormDialogProps {
     category: SampahCategory | null;
 }
 
-export function CategoryFormDialog({ open, onOpenChange, category }: CategoryFormDialogProps) {
-    const { data, setData, post, patch, processing, errors, reset, clearErrors } = useForm({
+export function CategoryFormDialog({
+    open,
+    onOpenChange,
+    category,
+}: CategoryFormDialogProps) {
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        processing,
+        errors,
+        reset,
+        clearErrors,
+    } = useForm({
         name: '',
         description: '',
     });
@@ -46,12 +59,17 @@ export function CategoryFormDialog({ open, onOpenChange, category }: CategoryFor
         e.preventDefault();
 
         if (category) {
-            patch(SampahCategoryController.update({ sampah_category: category.id }).url, {
-                onSuccess: () => {
-                    onOpenChange(false);
-                    reset();
+            patch(
+                SampahCategoryController.update({
+                    sampah_category: category.id,
+                }).url,
+                {
+                    onSuccess: () => {
+                        onOpenChange(false);
+                        reset();
+                    },
                 },
-            });
+            );
         } else {
             post(SampahCategoryController.store().url, {
                 onSuccess: () => {
@@ -66,9 +84,13 @@ export function CategoryFormDialog({ open, onOpenChange, category }: CategoryFor
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{category ? 'Ubah Kategori' : 'Tambah Kategori Baru'}</DialogTitle>
+                    <DialogTitle>
+                        {category ? 'Ubah Kategori' : 'Tambah Kategori Baru'}
+                    </DialogTitle>
                     <DialogDescription>
-                        {category ? 'Ubah nama dan deskripsi kategori sampah.' : 'Buat kategori sampah baru.'}
+                        {category
+                            ? 'Ubah nama dan deskripsi kategori sampah.'
+                            : 'Buat kategori sampah baru.'}
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
@@ -88,15 +110,21 @@ export function CategoryFormDialog({ open, onOpenChange, category }: CategoryFor
                         <textarea
                             id="category_desc"
                             value={data.description}
-                            onChange={(e) => setData('description', e.target.value)}
+                            onChange={(e) =>
+                                setData('description', e.target.value)
+                            }
                             placeholder="Contoh: Kategori untuk botol plastik, gelas kemasan, dll..."
                             rows={3}
-                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden"
                         />
                         <InputError message={errors.description} />
                     </div>
                     <DialogFooter className="mt-6">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
                             Batal
                         </Button>
                         <Button type="submit" disabled={processing}>

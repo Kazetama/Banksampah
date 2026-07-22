@@ -18,7 +18,12 @@ interface RedemptionStatusDialogProps {
     statusToSet: 'process' | 'done' | 'rejected' | null;
 }
 
-export function RedemptionStatusDialog({ open, onOpenChange, redemption, statusToSet }: RedemptionStatusDialogProps) {
+export function RedemptionStatusDialog({
+    open,
+    onOpenChange,
+    redemption,
+    statusToSet,
+}: RedemptionStatusDialogProps) {
     const handleConfirm = () => {
         if (redemption && statusToSet) {
             router.patch(
@@ -30,7 +35,7 @@ export function RedemptionStatusDialog({ open, onOpenChange, redemption, statusT
                     onSuccess: () => {
                         onOpenChange(false);
                     },
-                }
+                },
             );
         }
     };
@@ -63,16 +68,19 @@ export function RedemptionStatusDialog({ open, onOpenChange, redemption, statusT
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-sm">
                 <DialogHeader>
-                    <DialogTitle>
-                        Konfirmasi Tindakan
-                    </DialogTitle>
+                    <DialogTitle>Konfirmasi Tindakan</DialogTitle>
                     <DialogDescription>
-                        Apakah Anda yakin ingin {getActionVerb(statusToSet)} pengajuan penukaran poin dari{' '}
-                        <strong>{redemption?.user?.name}</strong> (hadiah: {redemption?.reward?.name})?
+                        Apakah Anda yakin ingin {getActionVerb(statusToSet)}{' '}
+                        pengajuan penukaran poin dari{' '}
+                        <strong>{redemption?.user?.name}</strong> (hadiah:{' '}
+                        {redemption?.reward?.name})?
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-4 gap-2">
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button
+                        variant="outline"
+                        onClick={() => onOpenChange(false)}
+                    >
                         Batal
                     </Button>
                     <Button

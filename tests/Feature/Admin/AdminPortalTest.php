@@ -1,10 +1,8 @@
 <?php
 
-use App\Models\Point;
-use App\Models\Reward;
 use App\Models\Sampah;
 use App\Models\SampahCategory;
-use App\Models\TukarPoin;
+use App\Models\Transaction;
 use App\Models\User;
 
 test('non-admin users are blocked from admin routes', function () {
@@ -25,8 +23,56 @@ test('admin users can visit the admin dashboard', function () {
         ->assertOk();
 });
 
-test('admin can record a waste deposit transaction which credits points to citizen', function () {
+test('admin can record a waste deposit transaction with custom manual waste name and price per kg', function () {
     $adminUser = User::factory()->create(['role' => 'admin']);
+    $citizen = User::factory()->create(['role' => 'nasabah']);
+
+    $this->actingAs($adminUser);
+
+    $this->post(route('admin.transactions.store'), [
+        'user_id' => $citizen->id,
+        'sampah_name' => 'Kardus Bekas Bebas',
+        'total_weight' => 5.0,
+        'custom_price_per_kg' => 4000,
+    ])->assertRedirect(route('admin.transactions.index'));
+
+    $this->assertDatabaseHas('transactions', [
+        'user_id' => $citizen->id,
+        'admin_id' => $adminUser->id,
+        'total_weight' => 5.0,
+        'total_income' => 20000, // 5.0 * 4000
+    ]);
+});
+
+test('admin can export transaction rekap to csv excel file', function () {
+    $adminUser = User::factory()->create(['role' => 'admin']);
+    $citizen = User::factory()->create(['role' => 'nasabah']);
+    $category = SampahCategory::create(['name' => 'Kertas']);
+    $sampah = Sampah::create([
+        'category_id' => $category->id,
+        'name' => 'Kardus Bekas',
+        'price_per_kg' => 1500,
+    ]);
+
+    Transaction::create([
+        'user_id' => $citizen->id,
+        'admin_id' => $adminUser->id,
+        'sampah_id' => $sampah->id,
+        'total_weight' => 10.0,
+        'total_income' => 15000,
+        'point_received' => 0,
+    ]);
+
+    $this->actingAs($adminUser);
+
+    $response = $this->get(route('admin.transactions.export'));
+    $response->assertOk();
+    $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
+});
+
+test('admin only sees transactions recorded by themselves', function () {
+    $admin1 = User::factory()->create(['role' => 'admin']);
+    $admin2 = User::factory()->create(['role' => 'admin']);
     $citizen = User::factory()->create(['role' => 'nasabah']);
     $category = SampahCategory::create(['name' => 'Plastik']);
     $sampah = Sampah::create([
@@ -35,89 +81,28 @@ test('admin can record a waste deposit transaction which credits points to citiz
         'price_per_kg' => 3000,
     ]);
 
-    $this->actingAs($adminUser);
-
-    $this->post(route('admin.transactions.store'), [
+    $tx1 = Transaction::create([
         'user_id' => $citizen->id,
-        'sampah_id' => $sampah->id,
-        'total_weight' => 5.0,
-    ])->assertRedirect(route('admin.transactions.index'));
-
-    $this->assertDatabaseHas('transactions', [
-        'user_id' => $citizen->id,
-        'admin_id' => $adminUser->id,
+        'admin_id' => $admin1->id,
         'sampah_id' => $sampah->id,
         'total_weight' => 5.0,
         'total_income' => 15000,
-        'point_received' => 15,
+        'point_received' => 0,
     ]);
 
-    $this->assertDatabaseHas('points', [
+    $tx2 = Transaction::create([
         'user_id' => $citizen->id,
-        'total_points' => 15,
-    ]);
-});
-
-test('admin can approve a pending point redemption request which decrements stock', function () {
-    $adminUser = User::factory()->create(['role' => 'admin']);
-    $citizen = User::factory()->create(['role' => 'nasabah']);
-    $reward = Reward::create([
-        'name' => 'Minyak Goreng',
-        'category' => 'Sembako',
-        'price' => 50,
-        'stock' => 10,
+        'admin_id' => $admin2->id,
+        'sampah_id' => $sampah->id,
+        'total_weight' => 10.0,
+        'total_income' => 30000,
+        'point_received' => 0,
     ]);
 
-    $redemption = TukarPoin::create([
-        'user_id' => $citizen->id,
-        'reward_id' => $reward->id,
-        'quantity' => 2,
-        'total_price' => 100,
-        'status' => 'pending',
-    ]);
-
-    $this->actingAs($adminUser);
-
-    $this->patch(route('admin.redemptions.update-status', $redemption->id), [
-        'status' => 'done',
-    ])->assertRedirect(route('admin.redemptions.index'));
-
-    expect($redemption->fresh()->status)->toBe('done');
-    expect($redemption->fresh()->admin_id)->toBe($adminUser->id);
-    expect($reward->fresh()->stock)->toBe(8);
-});
-
-test('admin can reject a pending point redemption request which refunds the points', function () {
-    $adminUser = User::factory()->create(['role' => 'admin']);
-    $citizen = User::factory()->create(['role' => 'nasabah']);
-    $reward = Reward::create([
-        'name' => 'Minyak Goreng',
-        'category' => 'Sembako',
-        'price' => 50,
-        'stock' => 10,
-    ]);
-
-    $pointModel = Point::create([
-        'user_id' => $citizen->id,
-        'total_points' => 150,
-    ]);
-
-    $redemption = TukarPoin::create([
-        'user_id' => $citizen->id,
-        'reward_id' => $reward->id,
-        'quantity' => 2,
-        'total_price' => 100,
-        'status' => 'pending',
-    ]);
-
-    $this->actingAs($adminUser);
-
-    $this->patch(route('admin.redemptions.update-status', $redemption->id), [
-        'status' => 'rejected',
-    ])->assertRedirect(route('admin.redemptions.index'));
-
-    expect($redemption->fresh()->status)->toBe('rejected');
-    expect($redemption->fresh()->admin_id)->toBe($adminUser->id);
-    expect($reward->fresh()->stock)->toBe(10);
-    expect($citizen->points->fresh()->total_points)->toBe(250);
+    $this->actingAs($admin1);
+    $response = $this->get(route('admin.transactions.index'));
+    $response->assertOk();
+    $transactions = $response->inertiaProps('transactions.data');
+    expect(count($transactions))->toBe(1);
+    expect($transactions[0]['id'])->toBe($tx1->id);
 });

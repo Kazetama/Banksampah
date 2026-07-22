@@ -21,8 +21,21 @@ interface RewardFormDialogProps {
     reward: Reward | null;
 }
 
-export function RewardFormDialog({ open, onOpenChange, reward }: RewardFormDialogProps) {
-    const { data, setData, post, patch, processing, errors, reset, clearErrors } = useForm({
+export function RewardFormDialog({
+    open,
+    onOpenChange,
+    reward,
+}: RewardFormDialogProps) {
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        processing,
+        errors,
+        reset,
+        clearErrors,
+    } = useForm({
         name: '',
         category: '',
         description: '',
@@ -72,9 +85,15 @@ export function RewardFormDialog({ open, onOpenChange, reward }: RewardFormDialo
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{reward ? 'Ubah Barang Hadiah' : 'Tambah Barang Hadiah Baru'}</DialogTitle>
+                    <DialogTitle>
+                        {reward
+                            ? 'Ubah Barang Hadiah'
+                            : 'Tambah Barang Hadiah Baru'}
+                    </DialogTitle>
                     <DialogDescription>
-                        {reward ? 'Ubah nama, rincian, biaya poin, dan stok barang hadiah.' : 'Buat barang hadiah baru untuk dapat ditukarkan warga.'}
+                        {reward
+                            ? 'Ubah nama, rincian, biaya poin, dan stok barang hadiah.'
+                            : 'Buat barang hadiah baru untuk dapat ditukarkan warga.'}
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
@@ -95,7 +114,9 @@ export function RewardFormDialog({ open, onOpenChange, reward }: RewardFormDialo
                         <Input
                             id="reward_category"
                             value={data.category}
-                            onChange={(e) => setData('category', e.target.value)}
+                            onChange={(e) =>
+                                setData('category', e.target.value)
+                            }
                             placeholder="Contoh: Sembako, Elektronik, Alat Tulis"
                             required
                         />
@@ -107,10 +128,12 @@ export function RewardFormDialog({ open, onOpenChange, reward }: RewardFormDialo
                         <textarea
                             id="reward_desc"
                             value={data.description}
-                            onChange={(e) => setData('description', e.target.value)}
+                            onChange={(e) =>
+                                setData('description', e.target.value)
+                            }
                             placeholder="Tuliskan keterangan lengkap barang hadiah..."
                             rows={3}
-                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden"
                         />
                         <InputError message={errors.description} />
                     </div>
@@ -122,7 +145,9 @@ export function RewardFormDialog({ open, onOpenChange, reward }: RewardFormDialo
                                 id="reward_price"
                                 type="number"
                                 value={data.price || ''}
-                                onChange={(e) => setData('price', Number(e.target.value))}
+                                onChange={(e) =>
+                                    setData('price', Number(e.target.value))
+                                }
                                 placeholder="Contoh: 50"
                                 min={1}
                                 required
@@ -134,8 +159,12 @@ export function RewardFormDialog({ open, onOpenChange, reward }: RewardFormDialo
                             <Input
                                 id="reward_stock"
                                 type="number"
-                                value={data.stock === 0 ? '0' : (data.stock || '')}
-                                onChange={(e) => setData('stock', Number(e.target.value))}
+                                value={
+                                    data.stock === 0 ? '0' : data.stock || ''
+                                }
+                                onChange={(e) =>
+                                    setData('stock', Number(e.target.value))
+                                }
                                 placeholder="Contoh: 10"
                                 min={0}
                                 required
@@ -145,7 +174,11 @@ export function RewardFormDialog({ open, onOpenChange, reward }: RewardFormDialo
                     </div>
 
                     <DialogFooter className="mt-6">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
                             Batal
                         </Button>
                         <Button type="submit" disabled={processing}>

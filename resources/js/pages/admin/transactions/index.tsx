@@ -1,5 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import { PlusCircle, Search } from 'lucide-react';
+import { Download, PlusCircle, Scale, Search, TrendingUp, Receipt } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { DepositPosDialog } from '@/components/deposit-pos-dialog';
 import { Button } from '@/components/ui/button';
@@ -14,23 +14,35 @@ interface Transaction {
     sampah_id: number;
     total_weight: number;
     total_income: number;
-    point_received: number;
     created_at: string;
     user: User;
     admin: User;
     sampah: Sampah;
 }
 
+interface RekapStats {
+    total_transactions: number;
+    total_weight: number;
+    total_income: number;
+}
+
 interface IndexProps {
     transactions: PaginatedData<Transaction>;
     nasabahs: User[];
     sampahItems: Sampah[];
+    rekap: RekapStats;
     filters: {
         search?: string;
     };
 }
 
-export default function Index({ transactions, nasabahs, sampahItems, filters }: IndexProps) {
+export default function Index({
+    transactions,
+    nasabahs,
+    sampahItems,
+    rekap,
+    filters,
+}: IndexProps) {
     const [search, setSearch] = useState(filters.search || '');
     const [isPosOpen, setIsPosOpen] = useState(false);
 
@@ -41,7 +53,7 @@ export default function Index({ transactions, nasabahs, sampahItems, filters }: 
                 router.get(
                     admin.transactions.index().url,
                     { search },
-                    { preserveState: true, replace: true }
+                    { preserveState: true, replace: true },
                 );
             }
         }, 400);
@@ -69,24 +81,95 @@ export default function Index({ transactions, nasabahs, sampahItems, filters }: 
         });
     };
 
+    const handleExport = () => {
+        window.location.href = admin.transactions.export().url;
+    };
+
     return (
         <>
-            <Head title="POS Setor Sampah" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <Head title="POS & Rekap Setoran Sampah" />
+            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
                 {/* Header */}
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
+                <div className="flex flex-col gap-4 border-b border-sidebar-border/70 pb-4 sm:flex-row sm:items-center sm:justify-between dark:border-sidebar-border">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">POS Setor Sampah</h1>
-                        <p className="text-sm text-muted-foreground mt-1">Mencatat setoran berat timbangan sampah dari warga dan melihat riwayat transaksi.</p>
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                            POS & Rekap Setoran Sampah
+                        </h1>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                            Pencatatan setoran sampah warga dan rekapitulasi data transaksi.
+                        </p>
                     </div>
-                    <Button onClick={() => setIsPosOpen(true)} className="gap-2">
-                        <PlusCircle className="size-4" /> POS Setor Sampah
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                        <Button
+                            onClick={handleExport}
+                            variant="outline"
+                            className="gap-2 border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10"
+                        >
+                            <Download className="size-4" /> Export Excel (CSV)
+                        </Button>
+                        <Button
+                            onClick={() => setIsPosOpen(true)}
+                            className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                        >
+                            <PlusCircle className="size-4" /> Catat Setoran Baru
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Rekap Stat Cards */}
+                <div className="grid gap-4 sm:grid-cols-3">
+                    <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 shadow-xs">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-blue-500/10 p-2.5 text-blue-500">
+                                <Receipt className="size-5" />
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-muted-foreground">
+                                    Total Rekap Transaksi
+                                </p>
+                                <p className="text-xl font-bold text-foreground">
+                                    {rekap.total_transactions} transaksi
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 shadow-xs">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-emerald-500/10 p-2.5 text-emerald-500">
+                                <Scale className="size-5" />
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-muted-foreground">
+                                    Total Massa Sampah (KG)
+                                </p>
+                                <p className="text-xl font-bold text-foreground">
+                                    {rekap.total_weight} kg
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl border border-sidebar-border/70 bg-card p-5 shadow-xs">
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-lg bg-emerald-500/10 p-2.5 text-emerald-600">
+                                <TrendingUp className="size-5" />
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-muted-foreground">
+                                    Total Uang Disalurkan
+                                </p>
+                                <p className="text-xl font-bold text-emerald-600">
+                                    {formatCurrency(rekap.total_income)}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Filters */}
                 <div className="relative">
-                    <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
+                    <Search className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                         placeholder="Cari setoran berdasarkan nama warga..."
                         value={search}
@@ -96,49 +179,76 @@ export default function Index({ transactions, nasabahs, sampahItems, filters }: 
                 </div>
 
                 {/* Datatable */}
-                <div className="border border-sidebar-border/70 dark:border-sidebar-border rounded-lg overflow-x-auto bg-card">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-xs uppercase bg-sidebar dark:bg-neutral-900 border-b border-sidebar-border/70 dark:border-sidebar-border">
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 bg-card dark:border-sidebar-border">
+                    <table className="w-full text-left text-sm">
+                        <thead className="border-b border-sidebar-border/70 bg-sidebar text-xs uppercase dark:border-sidebar-border dark:bg-neutral-900">
                             <tr>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Waktu</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Nasabah (Warga)</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Jenis Sampah</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Berat</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Uang Diterima (Rp)</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Perolehan Poin</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Petugas Pencatat</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Waktu Setor
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Nasabah (Warga)
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Jenis Sampah
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Berat (KG)
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Harga Satuan (Rp/KG)
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Total Uang (Rp)
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Petugas Pencatat
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-sidebar-border/50 dark:divide-sidebar-border/30">
                             {transactions.data.length > 0 ? (
-                                transactions.data.map((tx) => (
-                                    <tr key={tx.id} className="hover:bg-accent/40 transition-colors">
-                                        <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
-                                            {formatDate(tx.created_at)}
-                                        </td>
-                                        <td className="px-6 py-4 font-medium text-foreground">
-                                            {tx.user ? tx.user.name : `Warga ID: ${tx.user_id}`}
-                                        </td>
-                                        <td className="px-6 py-4 text-muted-foreground">
-                                            {tx.sampah ? tx.sampah.name : 'Sampah Tidak Dikenal'}
-                                        </td>
-                                        <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
-                                            {tx.total_weight} kg
-                                        </td>
-                                        <td className="px-6 py-4 font-semibold text-emerald-500 whitespace-nowrap">
-                                            {formatCurrency(tx.total_income)}
-                                        </td>
-                                        <td className="px-6 py-4 font-bold text-foreground">
-                                            +{tx.point_received} poin
-                                        </td>
-                                        <td className="px-6 py-4 text-muted-foreground">
-                                            {tx.admin ? tx.admin.name : '-'}
-                                        </td>
-                                    </tr>
-                                ))
+                                transactions.data.map((tx) => {
+                                    const pricePerKg = tx.total_weight > 0 ? Math.round(tx.total_income / tx.total_weight) : 0;
+                                    return (
+                                        <tr
+                                            key={tx.id}
+                                            className="transition-colors hover:bg-accent/40"
+                                        >
+                                            <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
+                                                {formatDate(tx.created_at)}
+                                            </td>
+                                            <td className="px-6 py-4 font-medium text-foreground">
+                                                {tx.user
+                                                    ? tx.user.name
+                                                    : `Warga ID: ${tx.user_id}`}
+                                            </td>
+                                            <td className="px-6 py-4 text-muted-foreground">
+                                                {tx.sampah
+                                                    ? tx.sampah.name
+                                                    : 'Sampah'}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap font-semibold text-foreground">
+                                                {tx.total_weight} kg
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
+                                                {formatCurrency(pricePerKg)} /kg
+                                            </td>
+                                            <td className="px-6 py-4 font-bold whitespace-nowrap text-emerald-600">
+                                                {formatCurrency(tx.total_income)}
+                                            </td>
+                                            <td className="px-6 py-4 text-muted-foreground">
+                                                {tx.admin ? tx.admin.name : '-'}
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             ) : (
                                 <tr>
-                                    <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
+                                    <td
+                                        colSpan={7}
+                                        className="px-6 py-12 text-center text-muted-foreground"
+                                    >
                                         Transaksi setoran tidak ditemukan.
                                     </td>
                                 </tr>
@@ -149,9 +259,11 @@ export default function Index({ transactions, nasabahs, sampahItems, filters }: 
 
                 {/* Pagination */}
                 {transactions.total > transactions.per_page && (
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-sidebar-border/70 pt-4 dark:border-sidebar-border">
-                        <div className="text-xs text-muted-foreground text-center sm:text-left">
-                            Menampilkan {transactions.from} hingga {transactions.to} dari {transactions.total} transaksi
+                    <div className="flex flex-col gap-4 border-t border-sidebar-border/70 pt-4 sm:flex-row sm:items-center sm:justify-between dark:border-sidebar-border">
+                        <div className="text-center text-xs text-muted-foreground sm:text-left">
+                            Menampilkan {transactions.from} hingga{' '}
+                            {transactions.to} dari {transactions.total}{' '}
+                            transaksi
                         </div>
                         <div className="flex flex-wrap justify-center gap-1">
                             {transactions.links.map((link, idx) => (
@@ -162,17 +274,22 @@ export default function Index({ transactions, nasabahs, sampahItems, filters }: 
                                             router.get(
                                                 link.url,
                                                 { search },
-                                                { preserveState: true, replace: true }
+                                                {
+                                                    preserveState: true,
+                                                    replace: true,
+                                                },
                                             );
                                         }
                                     }}
                                     disabled={!link.url}
-                                    className={`px-3 py-1.5 text-xs border rounded-md transition-colors ${
+                                    className={`rounded-md border px-3 py-1.5 text-xs transition-colors ${
                                         link.active
-                                            ? 'bg-primary text-primary-foreground border-transparent font-medium'
-                                            : 'hover:bg-accent text-foreground border-sidebar-border/70 dark:border-sidebar-border'
-                                    } ${!link.url ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                            ? 'border-transparent bg-primary font-medium text-primary-foreground'
+                                            : 'border-sidebar-border/70 text-foreground hover:bg-accent dark:border-sidebar-border'
+                                    } ${!link.url ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'}`}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
                                 />
                             ))}
                         </div>
@@ -194,8 +311,9 @@ export default function Index({ transactions, nasabahs, sampahItems, filters }: 
 Index.layout = {
     breadcrumbs: [
         {
-            title: 'POS Setor Sampah',
+            title: 'POS & Rekap Setoran',
             href: admin.transactions.index().url,
         },
     ],
 };
+

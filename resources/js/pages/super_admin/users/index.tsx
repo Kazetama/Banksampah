@@ -28,11 +28,14 @@ export default function Index({ users, filters }: IndexProps) {
     // Debounce search and filter updates
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
-            if (search !== (filters.search || '') || roleFilter !== (filters.role || 'all')) {
+            if (
+                search !== (filters.search || '') ||
+                roleFilter !== (filters.role || 'all')
+            ) {
                 router.get(
                     superAdmin.users.index().url,
                     { search, role: roleFilter },
-                    { preserveState: true, replace: true }
+                    { preserveState: true, replace: true },
                 );
             }
         }, 400);
@@ -58,11 +61,23 @@ export default function Index({ users, filters }: IndexProps) {
     const getRoleBadge = (role: string) => {
         switch (role) {
             case 'super_admin':
-                return <Badge className="bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20">Super Admin</Badge>;
+                return (
+                    <Badge className="border-red-500/20 bg-red-500/10 text-red-500 hover:bg-red-500/20">
+                        Super Admin
+                    </Badge>
+                );
             case 'admin':
-                return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20">Admin</Badge>;
+                return (
+                    <Badge className="border-blue-500/20 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20">
+                        Admin
+                    </Badge>
+                );
             default:
-                return <Badge className="bg-green-500/10 text-green-500 border-green-500/20 hover:bg-green-500/20">Nasabah</Badge>;
+                return (
+                    <Badge className="border-green-500/20 bg-green-500/10 text-green-500 hover:bg-green-500/20">
+                        Nasabah
+                    </Badge>
+                );
         }
     };
 
@@ -70,12 +85,20 @@ export default function Index({ users, filters }: IndexProps) {
         <>
             <Head title="Manajemen Pengguna" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
+                <div className="flex flex-col gap-4 border-b border-sidebar-border/70 pb-4 sm:flex-row sm:items-center sm:justify-between dark:border-sidebar-border">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-foreground">Manajemen Pengguna</h1>
-                        <p className="text-sm text-muted-foreground mt-1">Mengelola akun, peran (role), alamat, dan hak akses pengguna.</p>
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                            Manajemen Pengguna
+                        </h1>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                            Mengelola akun, peran (role), alamat, dan hak akses
+                            pengguna.
+                        </p>
                     </div>
-                    <Button onClick={handleCreateClick} className="w-full sm:w-auto gap-2">
+                    <Button
+                        onClick={handleCreateClick}
+                        className="w-full gap-2 sm:w-auto"
+                    >
                         <Plus className="size-4" /> Tambah Pengguna Baru
                     </Button>
                 </div>
@@ -83,7 +106,7 @@ export default function Index({ users, filters }: IndexProps) {
                 {/* Filters */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="relative flex-1">
-                        <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
+                        <Search className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                         <Input
                             placeholder="Cari berdasarkan nama atau email..."
                             value={search}
@@ -95,7 +118,7 @@ export default function Index({ users, filters }: IndexProps) {
                         <select
                             value={roleFilter}
                             onChange={(e) => setRoleFilter(e.target.value)}
-                            className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                            className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden"
                         >
                             <option value="all">Semua Peran (Role)</option>
                             <option value="super_admin">Super Admin</option>
@@ -106,32 +129,51 @@ export default function Index({ users, filters }: IndexProps) {
                 </div>
 
                 {/* Datatable */}
-                <div className="flex-1 min-h-[400px] border border-sidebar-border/70 dark:border-sidebar-border rounded-lg overflow-x-auto bg-card">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-xs uppercase bg-sidebar dark:bg-neutral-900 border-b border-sidebar-border/70 dark:border-sidebar-border">
+                <div className="min-h-[400px] flex-1 overflow-x-auto rounded-lg border border-sidebar-border/70 bg-card dark:border-sidebar-border">
+                    <table className="w-full text-left text-sm">
+                        <thead className="border-b border-sidebar-border/70 bg-sidebar text-xs uppercase dark:border-sidebar-border dark:bg-neutral-900">
                             <tr>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Pengguna</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Peran</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Nomor Telepon</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Alamat</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground text-right">Aksi</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Pengguna
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Peran
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Nomor Telepon
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Alamat
+                                </th>
+                                <th className="px-6 py-4 text-right font-semibold text-muted-foreground">
+                                    Aksi
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-sidebar-border/50 dark:divide-sidebar-border/30">
                             {users.data.length > 0 ? (
                                 users.data.map((user) => (
-                                    <tr key={user.id} className="hover:bg-accent/40 transition-colors">
+                                    <tr
+                                        key={user.id}
+                                        className="transition-colors hover:bg-accent/40"
+                                    >
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
-                                                <span className="font-medium text-foreground">{user.name}</span>
-                                                <span className="text-xs text-muted-foreground">{user.email}</span>
+                                                <span className="font-medium text-foreground">
+                                                    {user.name}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {user.email}
+                                                </span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">{getRoleBadge(user.role)}</td>
+                                        <td className="px-6 py-4">
+                                            {getRoleBadge(user.role)}
+                                        </td>
                                         <td className="px-6 py-4 text-muted-foreground">
                                             {user.phone_number || '-'}
                                         </td>
-                                        <td className="px-6 py-4 text-muted-foreground max-w-xs truncate">
+                                        <td className="max-w-xs truncate px-6 py-4 text-muted-foreground">
                                             {user.address || '-'}
                                         </td>
                                         <td className="px-6 py-4 text-right">
@@ -139,7 +181,9 @@ export default function Index({ users, filters }: IndexProps) {
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
-                                                    onClick={() => handleEditClick(user)}
+                                                    onClick={() =>
+                                                        handleEditClick(user)
+                                                    }
                                                     className="size-8"
                                                 >
                                                     <Edit className="size-3.5" />
@@ -147,8 +191,10 @@ export default function Index({ users, filters }: IndexProps) {
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
-                                                    onClick={() => handleDeleteClick(user)}
-                                                    className="size-8 text-red-500 hover:text-red-600 hover:bg-red-500/10 border-red-500/10"
+                                                    onClick={() =>
+                                                        handleDeleteClick(user)
+                                                    }
+                                                    className="size-8 border-red-500/10 text-red-500 hover:bg-red-500/10 hover:text-red-600"
                                                 >
                                                     <Trash2 className="size-3.5" />
                                                 </Button>
@@ -158,7 +204,10 @@ export default function Index({ users, filters }: IndexProps) {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
+                                    <td
+                                        colSpan={5}
+                                        className="px-6 py-12 text-center text-muted-foreground"
+                                    >
                                         Pengguna tidak ditemukan.
                                     </td>
                                 </tr>
@@ -169,9 +218,10 @@ export default function Index({ users, filters }: IndexProps) {
 
                 {/* Pagination */}
                 {users.total > users.per_page && (
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-sidebar-border/70 pt-4 dark:border-sidebar-border">
-                        <div className="text-xs text-muted-foreground text-center sm:text-left">
-                            Menampilkan {users.from} hingga {users.to} dari {users.total} pengguna
+                    <div className="flex flex-col gap-4 border-t border-sidebar-border/70 pt-4 sm:flex-row sm:items-center sm:justify-between dark:border-sidebar-border">
+                        <div className="text-center text-xs text-muted-foreground sm:text-left">
+                            Menampilkan {users.from} hingga {users.to} dari{' '}
+                            {users.total} pengguna
                         </div>
                         <div className="flex flex-wrap justify-center gap-1">
                             {users.links.map((link, idx) => (
@@ -182,17 +232,22 @@ export default function Index({ users, filters }: IndexProps) {
                                             router.get(
                                                 link.url,
                                                 { search, role: roleFilter },
-                                                { preserveState: true, replace: true }
+                                                {
+                                                    preserveState: true,
+                                                    replace: true,
+                                                },
                                             );
                                         }
                                     }}
                                     disabled={!link.url}
-                                    className={`px-3 py-1.5 text-xs border rounded-md transition-colors ${
+                                    className={`rounded-md border px-3 py-1.5 text-xs transition-colors ${
                                         link.active
-                                            ? 'bg-primary text-primary-foreground border-transparent font-medium'
-                                            : 'hover:bg-accent text-foreground border-sidebar-border/70 dark:border-sidebar-border'
-                                    } ${!link.url ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                            ? 'border-transparent bg-primary font-medium text-primary-foreground'
+                                            : 'border-sidebar-border/70 text-foreground hover:bg-accent dark:border-sidebar-border'
+                                    } ${!link.url ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'}`}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
                                 />
                             ))}
                         </div>
@@ -201,10 +256,18 @@ export default function Index({ users, filters }: IndexProps) {
             </div>
 
             {/* Create/Edit User Dialog Modal */}
-            <UserFormDialog open={isModalOpen} onOpenChange={setIsModalOpen} user={userToEdit} />
+            <UserFormDialog
+                open={isModalOpen}
+                onOpenChange={setIsModalOpen}
+                user={userToEdit}
+            />
 
             {/* Confirm Delete Dialog */}
-            <DeleteUserDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen} user={userToDelete} />
+            <DeleteUserDialog
+                open={isDeleteOpen}
+                onOpenChange={setIsDeleteOpen}
+                user={userToDelete}
+            />
         </>
     );
 }

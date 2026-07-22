@@ -17,14 +17,23 @@ interface DeleteCategoryDialogProps {
     category: SampahCategory | null;
 }
 
-export function DeleteCategoryDialog({ open, onOpenChange, category }: DeleteCategoryDialogProps) {
+export function DeleteCategoryDialog({
+    open,
+    onOpenChange,
+    category,
+}: DeleteCategoryDialogProps) {
     const confirmDelete = () => {
         if (category) {
-            router.delete(SampahCategoryController.destroy({ sampah_category: category.id }).url, {
-                onSuccess: () => {
-                    onOpenChange(false);
+            router.delete(
+                SampahCategoryController.destroy({
+                    sampah_category: category.id,
+                }).url,
+                {
+                    onSuccess: () => {
+                        onOpenChange(false);
+                    },
                 },
-            });
+            );
         }
     };
 
@@ -32,13 +41,20 @@ export function DeleteCategoryDialog({ open, onOpenChange, category }: DeleteCat
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-sm">
                 <DialogHeader>
-                    <DialogTitle className="text-red-500">Hapus Kategori</DialogTitle>
+                    <DialogTitle className="text-red-500">
+                        Hapus Kategori
+                    </DialogTitle>
                     <DialogDescription>
-                        Apakah Anda yakin ingin menghapus kategori <strong>{category?.name}</strong>? Tindakan ini bersifat permanen dan tidak dapat dibatalkan.
+                        Apakah Anda yakin ingin menghapus kategori{' '}
+                        <strong>{category?.name}</strong>? Tindakan ini bersifat
+                        permanen dan tidak dapat dibatalkan.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-4 gap-2">
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button
+                        variant="outline"
+                        onClick={() => onOpenChange(false)}
+                    >
                         Batal
                     </Button>
                     <Button variant="destructive" onClick={confirmDelete}>

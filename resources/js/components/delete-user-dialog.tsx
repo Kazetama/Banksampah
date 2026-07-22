@@ -17,7 +17,11 @@ interface DeleteUserDialogProps {
     user: User | null;
 }
 
-export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogProps) {
+export function DeleteUserDialog({
+    open,
+    onOpenChange,
+    user,
+}: DeleteUserDialogProps) {
     const confirmDelete = () => {
         if (user) {
             router.delete(UserController.destroy({ user: user.id }).url, {
@@ -32,13 +36,20 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-sm">
                 <DialogHeader>
-                    <DialogTitle className="text-red-500">Hapus Pengguna</DialogTitle>
+                    <DialogTitle className="text-red-500">
+                        Hapus Pengguna
+                    </DialogTitle>
                     <DialogDescription>
-                        Apakah Anda yakin ingin menghapus <strong>{user?.name}</strong>? Tindakan ini bersifat permanen dan tidak dapat dibatalkan.
+                        Apakah Anda yakin ingin menghapus{' '}
+                        <strong>{user?.name}</strong>? Tindakan ini bersifat
+                        permanen dan tidak dapat dibatalkan.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-4 gap-2">
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button
+                        variant="outline"
+                        onClick={() => onOpenChange(false)}
+                    >
                         Batal
                     </Button>
                     <Button variant="destructive" onClick={confirmDelete}>

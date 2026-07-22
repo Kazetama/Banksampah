@@ -18,7 +18,11 @@ class TukarPoinController extends Controller
      */
     public function index(Request $request): Response
     {
-        $query = TukarPoin::with(['user', 'admin', 'reward']);
+        $adminId = auth()->id();
+        $query = TukarPoin::with(['user', 'admin', 'reward'])
+            ->where(function ($q) use ($adminId) {
+                $q->whereNull('admin_id')->orWhere('admin_id', $adminId);
+            });
 
         if ($request->filled('search')) {
             $search = $request->input('search');

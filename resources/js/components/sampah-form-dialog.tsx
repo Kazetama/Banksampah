@@ -22,8 +22,22 @@ interface SampahFormDialogProps {
     categories: SampahCategory[];
 }
 
-export function SampahFormDialog({ open, onOpenChange, sampah, categories }: SampahFormDialogProps) {
-    const { data, setData, post, patch, processing, errors, reset, clearErrors } = useForm({
+export function SampahFormDialog({
+    open,
+    onOpenChange,
+    sampah,
+    categories,
+}: SampahFormDialogProps) {
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        processing,
+        errors,
+        reset,
+        clearErrors,
+    } = useForm({
         category_id: '' as string | number,
         name: '',
         price_per_kg: 0,
@@ -73,9 +87,15 @@ export function SampahFormDialog({ open, onOpenChange, sampah, categories }: Sam
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{sampah ? 'Ubah Jenis Sampah' : 'Tambah Jenis Sampah Baru'}</DialogTitle>
+                    <DialogTitle>
+                        {sampah
+                            ? 'Ubah Jenis Sampah'
+                            : 'Tambah Jenis Sampah Baru'}
+                    </DialogTitle>
                     <DialogDescription>
-                        {sampah ? 'Ubah nama, kategori, dan harga per kg untuk jenis sampah ini.' : 'Tambahkan jenis sampah baru ke dalam daftar.'}
+                        {sampah
+                            ? 'Ubah nama, kategori, dan harga per kg untuk jenis sampah ini.'
+                            : 'Tambahkan jenis sampah baru ke dalam daftar.'}
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
@@ -96,8 +116,10 @@ export function SampahFormDialog({ open, onOpenChange, sampah, categories }: Sam
                         <select
                             id="category_id"
                             value={data.category_id}
-                            onChange={(e) => setData('category_id', Number(e.target.value))}
-                            className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                            onChange={(e) =>
+                                setData('category_id', Number(e.target.value))
+                            }
+                            className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden"
                             required
                         >
                             {categories.map((cat) => (
@@ -115,7 +137,9 @@ export function SampahFormDialog({ open, onOpenChange, sampah, categories }: Sam
                             id="price_per_kg"
                             type="number"
                             value={data.price_per_kg || ''}
-                            onChange={(e) => setData('price_per_kg', Number(e.target.value))}
+                            onChange={(e) =>
+                                setData('price_per_kg', Number(e.target.value))
+                            }
                             placeholder="Contoh: 3000"
                             min={1}
                             required
@@ -124,11 +148,17 @@ export function SampahFormDialog({ open, onOpenChange, sampah, categories }: Sam
                     </div>
 
                     <DialogFooter className="mt-6">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
                             Batal
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            {sampah ? 'Simpan Perubahan' : 'Tambah Jenis Sampah'}
+                            {sampah
+                                ? 'Simpan Perubahan'
+                                : 'Tambah Jenis Sampah'}
                         </Button>
                     </DialogFooter>
                 </form>

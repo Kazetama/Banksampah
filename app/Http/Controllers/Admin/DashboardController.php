@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Reward;
 use App\Models\Transaction;
-use App\Models\TukarPoin;
 use App\Models\User;
 use Carbon\Carbon;
 use Inertia\Inertia;
@@ -19,23 +17,21 @@ class DashboardController extends Controller
     public function index(): Response
     {
         $today = Carbon::today();
+        $adminId = auth()->id();
 
-        // Stats Cards Calculations
-        $transactionsTodayCount = Transaction::whereDate('created_at', $today)->count();
-        $weightToday = (float) Transaction::whereDate('created_at', $today)->sum('total_weight');
-        $pendingRedemptions = TukarPoin::where('status', 'pending')->count();
+        // Stats Cards Calculations scoped to current admin
+        $transactionsTodayCount = Transaction::where('admin_id', $adminId)->whereDate('created_at', $today)->count();
+        $weightToday = (float) Transaction::where('admin_id', $adminId)->whereDate('created_at', $today)->sum('total_weight');
+        $incomeToday = (int) Transaction::where('admin_id', $adminId)->whereDate('created_at', $today)->sum('total_income');
+
+        $totalWeightAll = (float) Transaction::where('admin_id', $adminId)->sum('total_weight');
+        $totalIncomeAll = (int) Transaction::where('admin_id', $adminId)->sum('total_income');
         $totalNasabah = User::where('role', 'nasabah')->count();
-        $lowStockRewards = Reward::where('stock', '<=', 5)->count();
 
-        // Recent Transactions (latest 5)
+        // Recent Transactions (latest 5) recorded by this admin
         $recentTransactions = Transaction::with(['user', 'sampah'])
+            ->where('admin_id', $adminId)
             ->latest()
-            ->take(5)
-            ->get();
-
-        // Low Stock Rewards list
-        $lowStockItems = Reward::where('stock', '<=', 5)
-            ->orderBy('stock', 'asc')
             ->take(5)
             ->get();
 
@@ -43,12 +39,12 @@ class DashboardController extends Controller
             'stats' => [
                 'transactions_today' => $transactionsTodayCount,
                 'weight_today' => round($weightToday, 1),
-                'pending_redemptions' => $pendingRedemptions,
+                'income_today' => $incomeToday,
+                'total_weight_all' => round($totalWeightAll, 1),
+                'total_income_all' => $totalIncomeAll,
                 'total_nasabah' => $totalNasabah,
-                'low_stock_rewards' => $lowStockRewards,
             ],
             'recent_transactions' => $recentTransactions,
-            'low_stock_items' => $lowStockItems,
         ]);
     }
 }

@@ -18,8 +18,9 @@ class StoreTransactionRequest extends FormRequest
     {
         return [
             'user_id' => ['required', 'exists:users,id'],
-            'sampah_id' => ['required', 'exists:sampah,id'],
+            'sampah_name' => ['required', 'string', 'max:255'],
             'total_weight' => ['required', 'numeric', 'min:0.1'],
+            'custom_price_per_kg' => ['required', 'numeric', 'min:0'],
         ];
     }
 }

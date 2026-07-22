@@ -3,12 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\AuditLog;
-use App\Models\Point;
-use App\Models\Reward;
 use App\Models\Sampah;
 use App\Models\SampahCategory;
 use App\Models\Transaction;
-use App\Models\TukarPoin;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -17,59 +14,109 @@ use Illuminate\Support\Facades\Hash;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Seed the application's database with realistic initial data.
      */
     public function run(): void
     {
-        // 1. Seed Users
+        // 1. Super Admin Account
         $superAdmin = User::factory()->create([
-            'name' => 'Super Admin User',
+            'name' => 'Super Admin KKN',
             'email' => 'super_admin@example.com',
             'role' => 'super_admin',
             'password' => Hash::make('password'),
+            'phone_number' => '081100001111',
+            'address' => 'Posko Utama KKN Aktivis Doko',
         ]);
 
-        $admin = User::factory()->create([
-            'name' => 'Admin User',
+        // 2. Admin (Pengepul / Petugas POS Bank Sampah) Accounts
+        $admin1 = User::factory()->create([
+            'name' => 'Petugas POS Doko (Pengepul Utama)',
             'email' => 'admin@example.com',
             'role' => 'admin',
             'password' => Hash::make('password'),
+            'phone_number' => '081234567890',
+            'address' => 'Pos Penimbangan Dusun Doko RT 01 / RW 02',
         ]);
+
+        $admin2 = User::factory()->create([
+            'name' => 'Petugas POS Sukomulyo',
+            'email' => 'admin2@example.com',
+            'role' => 'admin',
+            'password' => Hash::make('password'),
+            'phone_number' => '081987654321',
+            'address' => 'Pos Penimbangan Dusun Sukomulyo RT 03 / RW 01',
+        ]);
+
+        // 3. Nasabah (Warga Desa) Accounts with realistic Indonesian names & phone numbers
+        $nasabahsData = [
+            [
+                'name' => 'Nasabah User (Demo)',
+                'email' => 'test@example.com',
+                'phone' => '081234567890',
+                'address' => 'Dusun Doko RT 01 / RW 02, Desa Doko',
+            ],
+            [
+                'name' => 'Budi Santoso',
+                'email' => 'budi@example.com',
+                'phone' => '081298765432',
+                'address' => 'Dusun Doko RT 01 / RW 02, Desa Doko',
+            ],
+            [
+                'name' => 'Siti Aminah',
+                'email' => 'siti@example.com',
+                'phone' => '085712345678',
+                'address' => 'Dusun Doko RT 03 / RW 02, Desa Doko',
+            ],
+            [
+                'name' => 'Eko Prasetyo',
+                'email' => 'eko@example.com',
+                'phone' => '081388776655',
+                'address' => 'Dusun Sukomulyo RT 02 / RW 01, Desa Doko',
+            ],
+            [
+                'name' => 'Dewi Lestari',
+                'email' => 'dewi@example.com',
+                'phone' => '081544332211',
+                'address' => 'Dusun Sukomulyo RT 04 / RW 03, Desa Doko',
+            ],
+            [
+                'name' => 'Rahmat Hidayat',
+                'email' => 'rahmat@example.com',
+                'phone' => '087811223344',
+                'address' => 'Dusun Krajan RT 01 / RW 03, Desa Doko',
+            ],
+            [
+                'name' => 'Tri Wahyuni',
+                'email' => 'tri@example.com',
+                'phone' => '082199887766',
+                'address' => 'Dusun Krajan RT 02 / RW 04, Desa Doko',
+            ],
+            [
+                'name' => 'Ahmad Dahlan',
+                'email' => 'ahmad@example.com',
+                'phone' => '085677889900',
+                'address' => 'Dusun Krajan RT 05 / RW 04, Desa Doko',
+            ],
+        ];
 
         $nasabahs = [];
-        $nasabahs[] = User::factory()->create([
-            'name' => 'Nasabah User',
-            'email' => 'test@example.com',
-            'role' => 'nasabah',
-            'password' => Hash::make('password'),
-            'address' => 'Jl. Merdeka No. 10, Jakarta',
-            'phone_number' => '081234567890',
-        ]);
+        foreach ($nasabahsData as $nd) {
+            $nasabahs[] = User::factory()->create([
+                'name' => $nd['name'],
+                'email' => $nd['email'],
+                'role' => 'nasabah',
+                'password' => Hash::make('password'),
+                'address' => $nd['address'],
+                'phone_number' => $nd['phone'],
+            ]);
+        }
 
-        $nasabahs[] = User::factory()->create([
-            'name' => 'Budi Santoso',
-            'email' => 'budi@example.com',
-            'role' => 'nasabah',
-            'password' => Hash::make('password'),
-            'address' => 'Jl. Mawar No. 5, Bandung',
-            'phone_number' => '082198765432',
-        ]);
-
-        $nasabahs[] = User::factory()->create([
-            'name' => 'Siti Aminah',
-            'email' => 'siti@example.com',
-            'role' => 'nasabah',
-            'password' => Hash::make('password'),
-            'address' => 'Jl. Melati No. 12, Surabaya',
-            'phone_number' => '083812345678',
-        ]);
-
-        // 2. Seed Sampah Categories
+        // 4. Sampah Categories
         $categories = [
-            'Plastik' => 'Kategori untuk segala jenis limbah plastik bersih.',
-            'Kertas' => 'Kategori untuk koran, kardus, majalah, dan kertas kantor.',
-            'Logam' => 'Kategori untuk besi, kuningan, tembaga, dan aluminium.',
-            'Kaca' => 'Kategori untuk botol kaca, stoples, dan pecahan kaca bersih.',
+            'Plastik' => 'Kategori limbah plastik bersih seperti botol, gelas, dan wadah plastik.',
+            'Kertas' => 'Kategori koran, kardus bekas, majalah, HVS, dan kertas bekas.',
+            'Logam' => 'Kategori besi tua, aluminium kaleng, tembaga, dan kuningan.',
+            'Kaca' => 'Kategori botol kaca, sirup, kecap, dan botol selai bersih.',
         ];
 
         $categoryModels = [];
@@ -80,32 +127,37 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 3. Seed Sampah Items
+        // 5. Sampah Items (Default reference prices)
         $sampahItems = [
             [
                 'category' => 'Plastik',
-                'name' => 'Botol Plastik PET',
-                'price' => 2000,
+                'name' => 'Botol Plastik PET Bersih',
+                'price' => 3000,
             ],
             [
                 'category' => 'Plastik',
                 'name' => 'Gelas Plastik Bersih',
+                'price' => 2500,
+            ],
+            [
+                'category' => 'Plastik',
+                'name' => 'Plastik Campur / Bodong',
                 'price' => 1500,
             ],
             [
                 'category' => 'Kertas',
                 'name' => 'Kardus Bekas Cokelat',
-                'price' => 3000,
+                'price' => 2000,
             ],
             [
                 'category' => 'Kertas',
-                'name' => 'Koran Bekas',
-                'price' => 2000,
+                'name' => 'Koran / HVS Bekas',
+                'price' => 2500,
             ],
             [
                 'category' => 'Logam',
                 'name' => 'Kaleng Aluminium Minuman',
-                'price' => 9000,
+                'price' => 10000,
             ],
             [
                 'category' => 'Logam',
@@ -114,7 +166,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'category' => 'Kaca',
-                'name' => 'Botol Kaca Sirup/Kecap',
+                'name' => 'Botol Kaca Kecap / Sirup',
                 'price' => 1200,
             ],
         ];
@@ -128,152 +180,41 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 4. Seed Rewards
-        $rewards = [
-            [
-                'name' => 'Beras Premium 5kg',
-                'category' => 'Sembako',
-                'desc' => 'Beras kualitas super kemasan 5kg.',
-                'price' => 100, // in points
-                'stock' => 25,
-            ],
-            [
-                'name' => 'Minyak Goreng 1L',
-                'category' => 'Sembako',
-                'desc' => 'Minyak goreng kelapa sawit kemasan botol 1 Liter.',
-                'price' => 40,
-                'stock' => 40,
-            ],
-            [
-                'name' => 'Gula Pasir 1kg',
-                'category' => 'Sembako',
-                'desc' => 'Gula pasir tebu asli kemasan 1kg.',
-                'price' => 30,
-                'stock' => 35,
-            ],
-            [
-                'name' => 'Voucher Pulsa 50rb',
-                'category' => 'Elektronik',
-                'desc' => 'Voucher isi ulang pulsa all operator senilai 50.000.',
-                'price' => 50,
-                'stock' => 100,
-            ],
-            [
-                'name' => 'Botol Minum Eco-Friendly',
-                'category' => 'Merchandise',
-                'desc' => 'Tumbler minum ramah lingkungan tahan panas/dingin.',
-                'price' => 60,
-                'stock' => 15,
-            ],
-        ];
-
-        $rewardModels = [];
-        foreach ($rewards as $r) {
-            $rewardModels[] = Reward::create([
-                'name' => $r['name'],
-                'category' => $r['category'],
-                'description' => $r['desc'],
-                'price' => $r['price'],
-                'stock' => $r['stock'],
-            ]);
-        }
-
-        // 5. Seed Historical Transactions & Points (Last 6 Months)
-        $startDate = Carbon::now()->subMonths(5)->startOfMonth();
+        // 6. Seed Realistic Historical Transactions Recorded by Admins for Nasabahs
+        $admins = [$admin1, $admin2];
+        $startDate = Carbon::now()->subDays(30);
         $endDate = Carbon::now();
 
-        $pointsTracker = [];
-        foreach ($nasabahs as $n) {
-            $pointsTracker[$n->id] = 0;
-        }
-
         while ($startDate->lessThanOrEqualTo($endDate)) {
-            // Generate 8-15 transactions for each month
-            $numTransactions = rand(8, 15);
-            for ($i = 0; $i < $numTransactions; $i++) {
+            // Random 1-3 transactions per day
+            $dailyTx = rand(1, 3);
+            for ($i = 0; $i < $dailyTx; $i++) {
+                $targetAdmin = $admins[array_rand($admins)];
                 $targetNasabah = $nasabahs[array_rand($nasabahs)];
                 $targetSampah = $sampahModels[array_rand($sampahModels)];
 
                 $weight = round(rand(2, 25) + (rand(0, 9) / 10), 1); // 2.0 to 25.9 kg
-                $income = (int) ($weight * $targetSampah->price_per_kg);
-                // 1 point for every 1000 Rp
-                $points = (int) ($income / 1000);
-
-                // Create transaction
-                $txDate = $startDate->copy()->addDays(rand(0, 27))->addHours(rand(8, 16));
-                // Do not exceed current time
-                if ($txDate->greaterThan(Carbon::now())) {
-                    $txDate = Carbon::now();
+                $customPricePerKg = $targetSampah->price_per_kg + rand(-200, 300); // Admin custom pricing variation
+                if ($customPricePerKg <= 0) {
+                    $customPricePerKg = $targetSampah->price_per_kg;
                 }
+
+                $income = (int) round($weight * $customPricePerKg);
+                $txDate = $startDate->copy()->addHours(rand(8, 16))->addMinutes(rand(0, 59));
 
                 Transaction::create([
                     'user_id' => $targetNasabah->id,
-                    'admin_id' => $admin->id,
+                    'admin_id' => $targetAdmin->id,
                     'sampah_id' => $targetSampah->id,
                     'total_weight' => $weight,
                     'total_income' => $income,
-                    'point_received' => $points,
+                    'point_received' => 0,
                     'created_at' => $txDate,
                     'updated_at' => $txDate,
                 ]);
-
-                $pointsTracker[$targetNasabah->id] += $points;
             }
 
-            $startDate->addMonth();
-        }
-
-        // Write points balance to points table
-        foreach ($nasabahs as $n) {
-            Point::create([
-                'user_id' => $n->id,
-                'total_points' => $pointsTracker[$n->id],
-            ]);
-        }
-
-        // 6. Seed Point Redemptions
-        foreach ($nasabahs as $n) {
-            // Seed a completed redemption
-            $completedReward = $rewardModels[array_rand($rewardModels)];
-            $qtyCompleted = rand(1, 2);
-            $totalPointsCompleted = $completedReward->price * $qtyCompleted;
-
-            // deduct points if they have enough
-            if ($pointsTracker[$n->id] >= $totalPointsCompleted) {
-                $txDate = Carbon::now()->subDays(rand(10, 30));
-                TukarPoin::create([
-                    'user_id' => $n->id,
-                    'admin_id' => $admin->id,
-                    'reward_id' => $completedReward->id,
-                    'quantity' => $qtyCompleted,
-                    'total_price' => $totalPointsCompleted,
-                    'status' => 'done',
-                    'created_at' => $txDate,
-                    'updated_at' => $txDate,
-                ]);
-                // update current balance in points table
-                $pointModel = Point::where('user_id', $n->id)->first();
-                $pointModel->decrement('total_points', $totalPointsCompleted);
-            }
-
-            // Seed a pending redemption
-            $pendingReward = $rewardModels[array_rand($rewardModels)];
-            $qtyPending = 1;
-            $totalPointsPending = $pendingReward->price * $qtyPending;
-
-            if ($totalPointsPending <= $pointsTracker[$n->id] - $totalPointsCompleted) {
-                TukarPoin::create([
-                    'user_id' => $n->id,
-                    'admin_id' => null,
-                    'reward_id' => $pendingReward->id,
-                    'quantity' => $qtyPending,
-                    'total_price' => $totalPointsPending,
-                    'status' => 'pending',
-                    'created_at' => Carbon::now()->subDays(rand(1, 5)),
-                ]);
-                $pointModel = Point::where('user_id', $n->id)->first();
-                $pointModel->decrement('total_points', $totalPointsPending);
-            }
+            $startDate->addDay();
         }
 
         // 7. Seed Audit Logs
@@ -281,32 +222,20 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $superAdmin->id,
                 'action' => 'login',
-                'desc' => 'Super Admin logged into the system.',
+                'desc' => 'Super Admin masuk ke portal sistem.',
+                'date' => Carbon::now()->subDays(10),
+            ],
+            [
+                'user_id' => $admin1->id,
+                'action' => 'create_transaction',
+                'desc' => 'Admin POS Doko mencatat setoran sampah untuk Budi Santoso (12.5 kg Kardus Bekas Cokelat).',
                 'date' => Carbon::now()->subDays(5),
             ],
             [
-                'user_id' => $superAdmin->id,
-                'action' => 'create_user',
-                'desc' => 'Super Admin created a new Admin user account: Admin User.',
-                'date' => Carbon::now()->subDays(5)->addMinutes(15),
-            ],
-            [
-                'user_id' => $admin->id,
-                'action' => 'create_sampah',
-                'desc' => 'Admin added new waste item: Kaleng Aluminium Minuman.',
-                'date' => Carbon::now()->subDays(4),
-            ],
-            [
-                'user_id' => $admin->id,
-                'action' => 'add_transaction',
-                'desc' => 'Admin recorded a new waste deposit transaction for Nasabah: Siti Aminah (8.5 kg).',
-                'date' => Carbon::now()->subDays(2),
-            ],
-            [
-                'user_id' => $admin->id,
-                'action' => 'approve_redemption',
-                'desc' => 'Admin approved points redemption request for Budi Santoso (1x Beras Premium 5kg).',
-                'date' => Carbon::now()->subDays(1),
+                'user_id' => $admin2->id,
+                'action' => 'create_transaction',
+                'desc' => 'Admin POS Sukomulyo mencatat setoran sampah untuk Siti Aminah (8.0 kg Botol Plastik PET Bersih).',
+                'date' => Carbon::now()->subDays(3),
             ],
         ];
 

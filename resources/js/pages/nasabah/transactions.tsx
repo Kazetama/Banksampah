@@ -21,7 +21,11 @@ interface TransactionsProps {
 }
 
 const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
+    new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+    }).format(value);
 
 const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString('id-ID', {
@@ -32,13 +36,20 @@ const formatDate = (dateStr: string) =>
         minute: '2-digit',
     });
 
-export default function Transactions({ transactions, filters }: TransactionsProps) {
+export default function Transactions({
+    transactions,
+    filters,
+}: TransactionsProps) {
     const [search, setSearch] = useState(filters.search || '');
 
     useEffect(() => {
         const timer = setTimeout(() => {
             if (search !== (filters.search || '')) {
-                router.get(nasabah.transactions.index().url, { search }, { preserveState: true, replace: true });
+                router.get(
+                    nasabah.transactions.index().url,
+                    { search },
+                    { preserveState: true, replace: true },
+                );
             }
         }, 400);
 
@@ -51,15 +62,17 @@ export default function Transactions({ transactions, filters }: TransactionsProp
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {/* Header */}
                 <div className="border-b border-sidebar-border/70 pb-4 dark:border-sidebar-border">
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Riwayat Setoran Sampah</h1>
-                    <p className="text-sm text-muted-foreground mt-1">
-                        Daftar semua setoran sampah Anda beserta perolehan rupiah dan poin.
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                        Riwayat Setoran Sampah
+                    </h1>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Daftar semua setoran sampah Anda beserta berat (kg) dan perolehan nominal uang (Rupiah).
                     </p>
                 </div>
 
                 {/* Search */}
                 <div className="relative">
-                    <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
+                    <Search className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                     <Input
                         placeholder="Cari berdasarkan jenis sampah..."
                         value={search}
@@ -69,34 +82,45 @@ export default function Transactions({ transactions, filters }: TransactionsProp
                 </div>
 
                 {/* Table */}
-                <div className="border border-sidebar-border/70 dark:border-sidebar-border rounded-lg overflow-x-auto bg-card">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-xs uppercase bg-sidebar dark:bg-neutral-900 border-b border-sidebar-border/70 dark:border-sidebar-border">
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 bg-card dark:border-sidebar-border">
+                    <table className="w-full text-left text-sm">
+                        <thead className="border-b border-sidebar-border/70 bg-sidebar text-xs uppercase dark:border-sidebar-border dark:bg-neutral-900">
                             <tr>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Tanggal</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Jenis Sampah</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Berat</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Uang Diterima</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Poin Diperoleh</th>
-                                <th className="px-6 py-4 font-semibold text-muted-foreground">Dicatat Oleh</th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Tanggal
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Jenis Sampah
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Berat (KG)
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Uang Diterima (Rp)
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Dicatat Oleh
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-sidebar-border/50 dark:divide-sidebar-border/30">
                             {transactions.data.length > 0 ? (
                                 transactions.data.map((tx) => (
-                                    <tr key={tx.id} className="hover:bg-accent/40 transition-colors">
-                                        <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
+                                    <tr
+                                        key={tx.id}
+                                        className="transition-colors hover:bg-accent/40"
+                                    >
+                                        <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
                                             {formatDate(tx.created_at)}
                                         </td>
                                         <td className="px-6 py-4 font-medium text-foreground">
                                             {tx.sampah?.name ?? 'Sampah'}
                                         </td>
-                                        <td className="px-6 py-4 text-muted-foreground">{tx.total_weight} kg</td>
-                                        <td className="px-6 py-4 font-semibold text-emerald-500 whitespace-nowrap">
-                                            {formatCurrency(tx.total_income)}
+                                        <td className="px-6 py-4 font-semibold text-foreground">
+                                            {tx.total_weight} kg
                                         </td>
-                                        <td className="px-6 py-4 font-bold text-amber-500">
-                                            +{tx.point_received} poin
+                                        <td className="px-6 py-4 font-bold whitespace-nowrap text-emerald-500">
+                                            {formatCurrency(tx.total_income)}
                                         </td>
                                         <td className="px-6 py-4 text-muted-foreground">
                                             {tx.admin?.name ?? 'Petugas'}
@@ -105,8 +129,12 @@ export default function Transactions({ transactions, filters }: TransactionsProp
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
-                                        Belum ada riwayat setoran yang ditemukan.
+                                    <td
+                                        colSpan={5}
+                                        className="px-6 py-12 text-center text-muted-foreground"
+                                    >
+                                        Belum ada riwayat setoran yang
+                                        ditemukan.
                                     </td>
                                 </tr>
                             )}
@@ -116,9 +144,10 @@ export default function Transactions({ transactions, filters }: TransactionsProp
 
                 {/* Pagination */}
                 {transactions.total > transactions.per_page && (
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-sidebar-border/70 pt-4 dark:border-sidebar-border">
-                        <div className="text-xs text-muted-foreground text-center sm:text-left">
-                            Menampilkan {transactions.from} hingga {transactions.to} dari {transactions.total} setoran
+                    <div className="flex flex-col gap-4 border-t border-sidebar-border/70 pt-4 sm:flex-row sm:items-center sm:justify-between dark:border-sidebar-border">
+                        <div className="text-center text-xs text-muted-foreground sm:text-left">
+                            Menampilkan {transactions.from} hingga{' '}
+                            {transactions.to} dari {transactions.total} setoran
                         </div>
                         <div className="flex flex-wrap justify-center gap-1">
                             {transactions.links.map((link, idx) => (
@@ -126,16 +155,25 @@ export default function Transactions({ transactions, filters }: TransactionsProp
                                     key={idx}
                                     onClick={() => {
                                         if (link.url) {
-                                            router.get(link.url, { search }, { preserveState: true, replace: true });
+                                            router.get(
+                                                link.url,
+                                                { search },
+                                                {
+                                                    preserveState: true,
+                                                    replace: true,
+                                                },
+                                            );
                                         }
                                     }}
                                     disabled={!link.url}
-                                    className={`px-3 py-1.5 text-xs border rounded-md transition-colors ${
+                                    className={`rounded-md border px-3 py-1.5 text-xs transition-colors ${
                                         link.active
-                                            ? 'bg-primary text-primary-foreground border-transparent font-medium'
-                                            : 'hover:bg-accent text-foreground border-sidebar-border/70 dark:border-sidebar-border'
-                                    } ${!link.url ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                            ? 'border-transparent bg-primary font-medium text-primary-foreground'
+                                            : 'border-sidebar-border/70 text-foreground hover:bg-accent dark:border-sidebar-border'
+                                    } ${!link.url ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'}`}
+                                    dangerouslySetInnerHTML={{
+                                        __html: link.label,
+                                    }}
                                 />
                             ))}
                         </div>

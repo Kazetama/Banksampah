@@ -1,5 +1,16 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Activity, Award, BookOpen, FolderGit2, Gift, LayoutGrid, Receipt, Scale, Trash2, Users } from 'lucide-react';
+import {
+    Activity,
+    Award,
+    BookOpen,
+    FolderGit2,
+    Gift,
+    LayoutGrid,
+    Receipt,
+    Scale,
+    Trash2,
+    Users,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -47,29 +58,9 @@ export function AppSidebar() {
             icon: LayoutGrid,
         });
         mainNavItems.push({
-            title: 'POS Setor Sampah',
+            title: 'POS & Rekap Setoran',
             href: admin.transactions.index().url,
             icon: Scale,
-        });
-        mainNavItems.push({
-            title: 'Persetujuan Hadiah',
-            href: admin.redemptions.index().url,
-            icon: Gift,
-        });
-        mainNavItems.push({
-            title: 'Inventaris Sampah',
-            href: admin.sampah.index().url,
-            icon: Trash2,
-        });
-        mainNavItems.push({
-            title: 'Inventaris Hadiah',
-            href: admin.rewards.index().url,
-            icon: Award,
-        });
-        mainNavItems.push({
-            title: 'Direktori Warga',
-            href: admin.nasabah.index().url,
-            icon: Users,
         });
     } else if (role === 'nasabah') {
         mainNavItems.push({
@@ -78,38 +69,20 @@ export function AppSidebar() {
             icon: LayoutGrid,
         });
         mainNavItems.push({
-            title: 'Katalog Sampah',
-            href: nasabah.katalogSampah.index().url,
-            icon: Trash2,
-        });
-        mainNavItems.push({
-            title: 'Katalog Hadiah',
-            href: nasabah.rewards.index().url,
-            icon: Gift,
-        });
-        mainNavItems.push({
             title: 'Riwayat Setoran',
             href: nasabah.transactions.index().url,
             icon: Receipt,
         });
     }
 
-    const footerNavItems: NavItem[] = [
-        {
-            title: 'Banksampah Repository',
-            href: 'https://github.com/citah/Banksampah',
-            icon: FolderGit2,
-        },
-        {
-            title: 'Banksampah Documentation',
-            href: 'https://github.com/citah/Banksampah/tree/main/docs',
-            icon: BookOpen,
-        },
-    ];
-
-    const dashboardUrl = role === 'super_admin'
-        ? superAdmin.dashboard().url
-        : (role === 'admin' ? admin.dashboard().url : (role === 'nasabah' ? nasabah.dashboard().url : '/dashboard'));
+    const dashboardUrl =
+        role === 'super_admin'
+            ? superAdmin.dashboard().url
+            : role === 'admin'
+              ? admin.dashboard().url
+              : role === 'nasabah'
+                ? nasabah.dashboard().url
+                : '/dashboard';
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -130,7 +103,6 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

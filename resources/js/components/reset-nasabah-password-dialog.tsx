@@ -21,10 +21,15 @@ interface ResetNasabahPasswordDialogProps {
     nasabah: User | null;
 }
 
-export function ResetNasabahPasswordDialog({ open, onOpenChange, nasabah }: ResetNasabahPasswordDialogProps) {
-    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
-        password: '',
-    });
+export function ResetNasabahPasswordDialog({
+    open,
+    onOpenChange,
+    nasabah,
+}: ResetNasabahPasswordDialogProps) {
+    const { data, setData, post, processing, errors, reset, clearErrors } =
+        useForm({
+            password: '',
+        });
 
     useEffect(() => {
         if (open) {
@@ -52,7 +57,9 @@ export function ResetNasabahPasswordDialog({ open, onOpenChange, nasabah }: Rese
                 <DialogHeader>
                     <DialogTitle>Reset Kata Sandi Nasabah</DialogTitle>
                     <DialogDescription>
-                        Mengatur ulang kata sandi untuk warga bernama <strong>{nasabah?.name}</strong>. Masukkan kata sandi baru di bawah ini.
+                        Mengatur ulang kata sandi untuk warga bernama{' '}
+                        <strong>{nasabah?.name}</strong>. Masukkan kata sandi
+                        baru di bawah ini.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
@@ -62,14 +69,20 @@ export function ResetNasabahPasswordDialog({ open, onOpenChange, nasabah }: Rese
                             id="new_password"
                             type="password"
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
                             placeholder="Minimal 8 karakter"
                             required
                         />
                         <InputError message={errors.password} />
                     </div>
                     <DialogFooter className="mt-4 gap-2">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
                             Batal
                         </Button>
                         <Button type="submit" disabled={processing}>

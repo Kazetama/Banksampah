@@ -21,8 +21,21 @@ interface UserFormDialogProps {
     user: User | null;
 }
 
-export function UserFormDialog({ open, onOpenChange, user }: UserFormDialogProps) {
-    const { data, setData, post, patch, processing, errors, reset, clearErrors } = useForm({
+export function UserFormDialog({
+    open,
+    onOpenChange,
+    user,
+}: UserFormDialogProps) {
+    const {
+        data,
+        setData,
+        post,
+        patch,
+        processing,
+        errors,
+        reset,
+        clearErrors,
+    } = useForm({
         name: '',
         email: '',
         password: '',
@@ -74,7 +87,9 @@ export function UserFormDialog({ open, onOpenChange, user }: UserFormDialogProps
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{user ? 'Ubah Akun Pengguna' : 'Tambah Pengguna Baru'}</DialogTitle>
+                    <DialogTitle>
+                        {user ? 'Ubah Akun Pengguna' : 'Tambah Pengguna Baru'}
+                    </DialogTitle>
                     <DialogDescription>
                         {user
                             ? 'Perbarui rincian pengguna. Kosongkan kata sandi jika tidak ingin mengubahnya.'
@@ -114,8 +129,14 @@ export function UserFormDialog({ open, onOpenChange, user }: UserFormDialogProps
                             id="password"
                             type="password"
                             value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
-                            placeholder={user ? 'Kosongkan jika tidak ingin mengubah' : 'Minimal 8 karakter'}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
+                            placeholder={
+                                user
+                                    ? 'Kosongkan jika tidak ingin mengubah'
+                                    : 'Minimal 8 karakter'
+                            }
                             required={!user}
                         />
                         <InputError message={errors.password} />
@@ -126,8 +147,14 @@ export function UserFormDialog({ open, onOpenChange, user }: UserFormDialogProps
                         <select
                             id="role"
                             value={data.role}
-                            onChange={(e) => setData('role', e.target.value as 'super_admin' | 'admin' | 'nasabah')}
-                            className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                            onChange={(e) =>
+                                setData(
+                                    'role',
+                                    e.target.value as
+                                        'super_admin' | 'admin' | 'nasabah',
+                                )
+                            }
+                            className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden"
                         >
                             <option value="nasabah">Nasabah (Warga)</option>
                             <option value="admin">Admin (Petugas)</option>
@@ -141,7 +168,9 @@ export function UserFormDialog({ open, onOpenChange, user }: UserFormDialogProps
                         <Input
                             id="phone_number"
                             value={data.phone_number}
-                            onChange={(e) => setData('phone_number', e.target.value)}
+                            onChange={(e) =>
+                                setData('phone_number', e.target.value)
+                            }
                             placeholder="Contoh: 081234567890"
                         />
                         <InputError message={errors.phone_number} />
@@ -155,13 +184,17 @@ export function UserFormDialog({ open, onOpenChange, user }: UserFormDialogProps
                             onChange={(e) => setData('address', e.target.value)}
                             placeholder="Alamat rumah lengkap..."
                             rows={3}
-                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden"
                         />
                         <InputError message={errors.address} />
                     </div>
 
                     <DialogFooter className="mt-6">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
                             Batal
                         </Button>
                         <Button type="submit" disabled={processing}>

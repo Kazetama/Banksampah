@@ -19,10 +19,6 @@ class DashboardController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        $user->load('points');
-
-        $totalPoints = $user->points?->total_points ?? 0;
-
         $totalIncome = Transaction::where('user_id', $user->id)->sum('total_income');
         $totalWeight = (float) Transaction::where('user_id', $user->id)->sum('total_weight');
 
@@ -34,7 +30,6 @@ class DashboardController extends Controller
 
         return Inertia::render('nasabah/dashboard', [
             'stats' => [
-                'total_points' => $totalPoints,
                 'total_income' => (int) $totalIncome,
                 'total_weight' => round($totalWeight, 1),
             ],
