@@ -277,12 +277,12 @@ export default function Welcome() {
                                     <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 bg-clip-text text-transparent">
                                         Berkah, Saldo
                                     </span>{' '}
-                                    & Hadiah Poin!
+                                    & Uang Rupiah!
                                 </h1>
 
                                 {/* Description */}
                                 <p className="mt-6 text-base leading-relaxed text-slate-600 sm:text-lg lg:text-xl font-medium max-w-2xl mx-auto lg:mx-0">
-                                    Selamat datang di <strong className="text-slate-900 font-bold">SIBANDO</strong> (Sistem Bank Sampah Doko). Program pengabdian masyarakat dari <strong className="text-emerald-700 font-bold">KKN Aktivis Desa Doko</strong> untuk menyulap sampah anorganik rumah tangga menjadi tabungan uang Rupiah dan Poin Reward yang menguntungkan.
+                                    Selamat datang di <strong className="text-slate-900 font-bold">SIBANDO</strong> (Sistem Bank Sampah Doko). Program pengabdian masyarakat dari <strong className="text-emerald-700 font-bold">KKN Aktivis Desa Doko</strong> untuk menyulap sampah anorganik rumah tangga menjadi tabungan uang Rupiah yang menguntungkan.
                                 </p>
 
                                 {/* Action Buttons */}
@@ -585,10 +585,10 @@ export default function Welcome() {
                                     <Coins className="h-7 w-7" />
                                 </div>
                                 <h3 className="mt-6 text-xl font-bold text-slate-900">
-                                    Konversi Rupiah & Poin Hadiah
+                                    Konversi Saldo Uang Rupiah
                                 </h3>
                                 <p className="mt-3 text-sm leading-relaxed text-slate-600 font-medium">
-                                    Setiap penimbangan sampah langsung dikonversi menjadi saldo uang Rupiah dan bonus Poin yang bisa ditukarkan dengan hadiah barang/sembako.
+                                    Setiap penimbangan sampah langsung dikonversi menjadi saldo uang Rupiah yang dapat dicairkan dengan mudah.
                                 </p>
                             </div>
 
@@ -680,10 +680,10 @@ export default function Welcome() {
                                     3
                                 </div>
                                 <h3 className="mt-6 text-xl font-extrabold text-slate-900">
-                                    Terima Saldo & Poin
+                                    Terima Saldo Uang Rupiah
                                 </h3>
                                 <p className="mt-3 text-sm text-slate-600 font-medium leading-relaxed">
-                                    Saldo Rupiah dan bonus Poin langsung bertambah di akun Anda! Gunakan saldo atau tukarkan poin dengan berbagai hadiah menarik.
+                                    Saldo Rupiah langsung bertambah di akun Anda! Gunakan atau cairkan saldo tabungan Anda dengan mudah.
                                 </p>
                             </div>
 
@@ -739,7 +739,7 @@ export default function Welcome() {
                                 Siap Menjadi Nasabah Bank Sampah Doko?
                             </h2>
                             <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg text-emerald-100 font-medium">
-                                Bergabunglah sekarang, kumpulkan sampah anorganik rumah tangga Anda, dan nikmati tabungan uang serta poin reward secara nyata.
+                                Bergabunglah sekarang, kumpulkan sampah anorganik rumah tangga Anda, dan nikmati tabungan uang Rupiah secara nyata.
                             </p>
                             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
                                 <Link

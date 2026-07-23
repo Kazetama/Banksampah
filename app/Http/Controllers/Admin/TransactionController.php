@@ -67,8 +67,35 @@ class TransactionController extends Controller
     public function store(StoreTransactionRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $userId = $validated['user_id'];
+        $nasabah = User::find($userId);
 
-        $sampahName = trim($validated['sampah_name']);
+        if (! $nasabah instanceof User) {
+            return redirect()->route('admin.transactions.index')
+                ->with('error', 'Nasabah tidak ditemukan.');
+        }
+
+        $namesList = [];
+        if ($request->filled('sampah_names') && is_array($request->input('sampah_names'))) {
+            foreach ($request->input('sampah_names') as $n) {
+                $trimmed = trim($n);
+                if ($trimmed !== '') {
+                    $namesList[] = $trimmed;
+                }
+            }
+        }
+
+        if (empty($namesList) && ! empty($validated['sampah_name'])) {
+            $namesList[] = trim($validated['sampah_name']);
+        }
+
+        if (empty($namesList)) {
+            return redirect()->back()->withErrors([
+                'sampah_names' => 'Minimal 1 kolom Jenis Sampah harus diisi.',
+            ]);
+        }
+
+        $sampahNameString = implode(', ', $namesList);
         $weight = (float) $validated['total_weight'];
         $pricePerKg = (float) $validated['custom_price_per_kg'];
         $income = (int) round($weight * $pricePerKg);
@@ -76,15 +103,15 @@ class TransactionController extends Controller
         $category = SampahCategory::first() ?? SampahCategory::create(['name' => 'Umum']);
 
         $sampah = Sampah::firstOrCreate(
-            ['name' => $sampahName],
+            ['name' => $sampahNameString],
             [
                 'category_id' => $category->id,
                 'price_per_kg' => $pricePerKg,
             ]
         );
 
-        $transaction = Transaction::create([
-            'user_id' => $validated['user_id'],
+        Transaction::create([
+            'user_id' => $userId,
             'admin_id' => auth()->id(),
             'sampah_id' => $sampah->id,
             'total_weight' => $weight,
@@ -92,16 +119,10 @@ class TransactionController extends Controller
             'point_received' => 0,
         ]);
 
-        $nasabah = User::find($validated['user_id']);
-        if (! $nasabah instanceof User) {
-            return redirect()->route('admin.transactions.index')
-                ->with('error', 'Nasabah tidak ditemukan.');
-        }
-
-        AuditLogger::log('create_transaction', "Admin mencatat transaksi setoran sampah untuk Nasabah: {$nasabah->name} ({$weight} kg {$sampah->name} @ Rp ".number_format($pricePerKg, 0, ',', '.').'/kg, Total: Rp '.number_format($income, 0, ',', '.').')');
+        AuditLogger::log('create_transaction', "Admin mencatat setoran sampah ({$sampahNameString}) untuk Nasabah: {$nasabah->name} ({$weight} kg @ Rp ".number_format($pricePerKg, 0, ',', '.').'/kg, Total: Rp '.number_format($income, 0, ',', '.').')');
 
         return redirect()->route('admin.transactions.index')
-            ->with('success', 'Transaksi pencatatan setoran sampah berhasil disimpan!');
+            ->with('success', "Pencatatan setoran sampah ({$sampahNameString}) untuk {$nasabah->name} sebesar Rp ".number_format($income, 0, ',', '.').' berhasil disimpan!');
     }
 
     /**

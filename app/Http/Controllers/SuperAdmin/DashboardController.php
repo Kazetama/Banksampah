@@ -4,7 +4,6 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
-use App\Models\TukarPoin;
 use App\Models\User;
 use Carbon\Carbon;
 use Inertia\Inertia;
@@ -30,9 +29,9 @@ class DashboardController extends Controller
 
         // 1. Stat Cards Calculations
         $totalNasabah = User::where('role', 'nasabah')->count();
+        $totalAdmin = User::where('role', 'admin')->count();
         $totalWeight = Transaction::sum('total_weight');
         $totalCashOut = Transaction::sum('total_income');
-        $totalPointsClaimed = TukarPoin::where('status', 'done')->sum('total_price');
 
         // Pre-fill months
         $monthlyWeightFormatted = [];
@@ -89,9 +88,9 @@ class DashboardController extends Controller
         return Inertia::render('super_admin/dashboard', [
             'stats' => [
                 'total_nasabah' => $totalNasabah,
+                'total_admin' => $totalAdmin,
                 'total_weight' => round((float) $totalWeight, 1),
                 'total_cash_out' => $totalCashOut,
-                'total_points_claimed' => $totalPointsClaimed,
             ],
             'charts' => [
                 'weight_trend' => $monthlyWeightFormatted,

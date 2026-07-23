@@ -7,9 +7,6 @@ export type User = {
     role: 'super_admin' | 'admin' | 'nasabah';
     address: string | null;
     phone_number: string | null;
-    points?: {
-        total_points: number;
-    } | null;
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
@@ -18,13 +15,3 @@ export type User = {
 export type Auth = {
     user: User;
 };
-
-/* @chisel-passkeys */
-export type Passkey = {
-    id: number;
-    name: string;
-    authenticator: string | null;
-    created_at_diff: string;
-    last_used_at_diff: string | null;
-};
-/* @end-chisel-passkeys */

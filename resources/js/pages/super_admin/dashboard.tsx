@@ -6,7 +6,7 @@ interface StatItem {
     total_nasabah: number;
     total_weight: number;
     total_cash_out: number;
-    total_points_claimed: number;
+    total_admin: number;
 }
 
 interface ChartNode {
@@ -464,22 +464,22 @@ export default function Dashboard({ stats, charts }: DashboardProps) {
                         </div>
                     </div>
 
-                    {/* Card 4: Points Claimed */}
+                    {/* Card 4: Total Admin / Petugas POS */}
                     <div className="relative overflow-hidden rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-xs transition-shadow hover:shadow-md">
                         <div className="flex items-center justify-between">
                             <span className="text-sm font-medium text-muted-foreground">
-                                Poin Ditukarkan
+                                Petugas / Admin RT
                             </span>
-                            <div className="rounded-lg bg-yellow-500/10 p-2 text-yellow-500">
-                                <Shield className="size-4" />
+                            <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500">
+                                <Users className="size-4" />
                             </div>
                         </div>
                         <div className="mt-4">
                             <span className="text-2xl font-bold text-foreground">
-                                {formatNumber(stats.total_points_claimed)} pts
+                                {formatNumber(stats.total_admin)} Petugas
                             </span>
                             <span className="mt-1 block text-xs text-muted-foreground">
-                                Hadiah poin disetujui
+                                Admin pengelola pos penimbangan
                             </span>
                         </div>
                     </div>

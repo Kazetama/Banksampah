@@ -1,7 +1,8 @@
 import { Head, router } from '@inertiajs/react';
-import { Download, PlusCircle, Scale, Search, TrendingUp, Receipt } from 'lucide-react';
+import { Download, Eye, PlusCircle, Scale, Search, TrendingUp, Receipt } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { DepositPosDialog } from '@/components/deposit-pos-dialog';
+import { TransactionDetailDialog } from '@/components/transaction-detail-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import admin from '@/routes/admin';
@@ -45,6 +46,7 @@ export default function Index({
 }: IndexProps) {
     const [search, setSearch] = useState(filters.search || '');
     const [isPosOpen, setIsPosOpen] = useState(false);
+    const [selectedDetailTx, setSelectedDetailTx] = useState<Transaction | null>(null);
 
     // Debounce search
     useEffect(() => {
@@ -204,6 +206,9 @@ export default function Index({
                                 <th className="px-6 py-4 font-semibold text-muted-foreground">
                                     Petugas Pencatat
                                 </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground text-center">
+                                    Aksi / Detail
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-sidebar-border/50 dark:divide-sidebar-border/30">
@@ -240,13 +245,23 @@ export default function Index({
                                             <td className="px-6 py-4 text-muted-foreground">
                                                 {tx.admin ? tx.admin.name : '-'}
                                             </td>
+                                            <td className="px-6 py-4 text-center whitespace-nowrap">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => setSelectedDetailTx(tx)}
+                                                    className="gap-1.5 border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-700 dark:text-emerald-400"
+                                                >
+                                                    <Eye className="size-3.5" /> Detail
+                                                </Button>
+                                            </td>
                                         </tr>
                                     );
                                 })
                             ) : (
                                 <tr>
                                     <td
-                                        colSpan={7}
+                                        colSpan={8}
                                         className="px-6 py-12 text-center text-muted-foreground"
                                     >
                                         Transaksi setoran tidak ditemukan.
@@ -303,6 +318,13 @@ export default function Index({
                 onOpenChange={setIsPosOpen}
                 nasabahs={nasabahs}
                 sampahItems={sampahItems}
+            />
+
+            {/* Transaction Detail Modal */}
+            <TransactionDetailDialog
+                open={!!selectedDetailTx}
+                onOpenChange={(open) => !open && setSelectedDetailTx(null)}
+                transaction={selectedDetailTx}
             />
         </>
     );
