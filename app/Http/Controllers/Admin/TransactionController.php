@@ -22,12 +22,19 @@ class TransactionController extends Controller
      */
     public function index(Request $request): Response
     {
-        $adminId = auth()->id();
+        /** @var User $user */
+        $user = auth()->user();
         $nasabahs = User::where('role', 'nasabah')->get();
         $sampahItems = Sampah::with('category')->get();
 
-        $query = Transaction::with(['user', 'admin', 'sampah.category'])
-            ->where('admin_id', $adminId);
+        $query = Transaction::with(['user', 'admin', 'sampah.category']);
+        $rekapQuery = Transaction::query();
+
+        // Admin RT only sees their own recorded transactions, Super Admin sees all transactions
+        if ($user->role !== 'super_admin') {
+            $query->where('admin_id', $user->id);
+            $rekapQuery->where('admin_id', $user->id);
+        }
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -36,8 +43,7 @@ class TransactionController extends Controller
             });
         }
 
-        // Calculate Rekap Stats for this Admin
-        $rekapQuery = Transaction::where('admin_id', $adminId);
+        // Calculate Rekap Stats
         $rekap = [
             'total_transactions' => $rekapQuery->count(),
             'total_weight' => round((float) $rekapQuery->sum('total_weight'), 1),
@@ -103,11 +109,15 @@ class TransactionController extends Controller
      */
     public function export(): StreamedResponse
     {
-        $adminId = auth()->id();
-        $transactions = Transaction::with(['user', 'sampah'])
-            ->where('admin_id', $adminId)
-            ->latest()
-            ->get();
+        /** @var User $user */
+        $user = auth()->user();
+        $query = Transaction::with(['user', 'sampah']);
+
+        if ($user->role !== 'super_admin') {
+            $query->where('admin_id', $user->id);
+        }
+
+        $transactions = $query->latest()->get();
 
         $filename = 'rekap-setoran-sampah-'.now()->format('Y-m-d_H-i').'.csv';
 
