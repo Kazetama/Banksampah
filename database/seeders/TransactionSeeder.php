@@ -57,6 +57,7 @@ class TransactionSeeder extends Seeder
                     'total_weight' => $weight,
                     'total_income' => $income,
                     'point_received' => 0,
+                    'type' => rand(0, 1) ? 'pilah' : 'campur',
                     'created_at' => $txDate,
                     'updated_at' => $txDate,
                 ]);

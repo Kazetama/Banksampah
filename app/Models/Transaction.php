@@ -14,6 +14,7 @@ class Transaction extends Model
         'total_weight',
         'total_income',
         'point_received',
+        'type',
         'created_at',
     ];
 

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->double('total_weight');
             $table->integer('total_income');
             $table->integer('point_received');
+            $table->string('type')->default('campur');
             $table->timestamps();
         });
     }

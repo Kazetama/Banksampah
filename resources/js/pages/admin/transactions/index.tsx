@@ -15,6 +15,7 @@ interface Transaction {
     sampah_id: number;
     total_weight: number;
     total_income: number;
+    type?: 'campur' | 'pilah';
     created_at: string;
     user: User;
     admin: User;
@@ -189,6 +190,9 @@ export default function Index({
                                     Waktu Setor
                                 </th>
                                 <th className="px-6 py-4 font-semibold text-muted-foreground">
+                                    Tipe Setoran
+                                </th>
+                                <th className="px-6 py-4 font-semibold text-muted-foreground">
                                     Nasabah (Warga)
                                 </th>
                                 <th className="px-6 py-4 font-semibold text-muted-foreground">
@@ -215,6 +219,7 @@ export default function Index({
                             {transactions.data.length > 0 ? (
                                 transactions.data.map((tx) => {
                                     const pricePerKg = tx.total_weight > 0 ? Math.round(tx.total_income / tx.total_weight) : 0;
+                                    const isPilah = tx.type === 'pilah' || (tx.sampah?.name || '').includes('@ Rp');
                                     return (
                                         <tr
                                             key={tx.id}
@@ -222,6 +227,17 @@ export default function Index({
                                         >
                                             <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
                                                 {formatDate(tx.created_at)}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {isPilah ? (
+                                                    <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                                                        ♻️ Pilah
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1 rounded-md border border-blue-500/30 bg-blue-500/10 px-2.5 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300">
+                                                        📦 Campur
+                                                    </span>
+                                                )}
                                             </td>
                                             <td className="px-6 py-4 font-medium text-foreground">
                                                 {tx.user
@@ -261,7 +277,7 @@ export default function Index({
                             ) : (
                                 <tr>
                                     <td
-                                        colSpan={8}
+                                        colSpan={9}
                                         className="px-6 py-12 text-center text-muted-foreground"
                                     >
                                         Transaksi setoran tidak ditemukan.

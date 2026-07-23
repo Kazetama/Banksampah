@@ -117,6 +117,7 @@ class TransactionController extends Controller
             'total_weight' => $weight,
             'total_income' => $income,
             'point_received' => 0,
+            'type' => $validated['type'] ?? 'campur',
         ]);
 
         AuditLogger::log('create_transaction', "Admin mencatat setoran sampah ({$sampahNameString}) untuk Nasabah: {$nasabah->name} ({$weight} kg @ Rp ".number_format($pricePerKg, 0, ',', '.').'/kg, Total: Rp '.number_format($income, 0, ',', '.').')');

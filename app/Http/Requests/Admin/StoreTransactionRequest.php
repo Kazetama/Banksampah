@@ -23,6 +23,7 @@ class StoreTransactionRequest extends FormRequest
             'sampah_name' => ['nullable', 'string', 'max:255'],
             'total_weight' => ['required', 'numeric', 'min:0.01'],
             'custom_price_per_kg' => ['required', 'numeric', 'min:0'],
+            'type' => ['nullable', 'string', 'in:campur,pilah'],
         ];
     }
 }

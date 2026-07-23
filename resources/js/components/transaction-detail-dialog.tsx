@@ -17,6 +17,7 @@ export interface Transaction {
     sampah_id: number;
     total_weight: number;
     total_income: number;
+    type?: 'campur' | 'pilah';
     created_at: string;
     user?: UserType;
     admin?: UserType;
@@ -93,6 +94,15 @@ export function TransactionDetailDialog({
                             <span className="font-bold font-mono text-foreground">
                                 #POS-{String(transaction.id).padStart(5, '0')}
                             </span>
+                            {transaction.type === 'pilah' || (transaction.sampah?.name || '').includes('@ Rp') ? (
+                                <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                                    ♻️ Pilah
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center gap-1 rounded-md border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[11px] font-semibold text-blue-700 dark:text-blue-300">
+                                    📦 Campur
+                                </span>
+                            )}
                         </div>
                         <div className="flex items-center gap-1.5 text-muted-foreground">
                             <Calendar className="size-3.5 text-emerald-600" />
