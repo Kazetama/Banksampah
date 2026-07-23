@@ -106,3 +106,27 @@ test('admin only sees transactions recorded by themselves', function () {
     expect(count($transactions))->toBe(1);
     expect($transactions[0]['id'])->toBe($tx1->id);
 });
+
+test('super admin can also access and record waste deposit transactions', function () {
+    $superAdmin = User::factory()->create(['role' => 'super_admin']);
+    $citizen = User::factory()->create(['role' => 'nasabah']);
+
+    $this->actingAs($superAdmin);
+
+    $this->get(route('admin.transactions.index'))
+        ->assertOk();
+
+    $this->post(route('admin.transactions.store'), [
+        'user_id' => $citizen->id,
+        'sampah_name' => 'Kertas Koran',
+        'total_weight' => 2.0,
+        'custom_price_per_kg' => 3000,
+    ])->assertRedirect(route('admin.transactions.index'));
+
+    $this->assertDatabaseHas('transactions', [
+        'user_id' => $citizen->id,
+        'admin_id' => $superAdmin->id,
+        'total_weight' => 2.0,
+        'total_income' => 6000,
+    ]);
+});

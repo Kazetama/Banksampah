@@ -42,6 +42,11 @@ export function AppSidebar() {
             icon: LayoutGrid,
         });
         mainNavItems.push({
+            title: 'POS & Rekap Setoran',
+            href: admin.transactions.index().url,
+            icon: Scale,
+        });
+        mainNavItems.push({
             title: 'Manajemen Pengguna',
             href: superAdmin.users.index().url,
             icon: Users,
